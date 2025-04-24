@@ -108,7 +108,7 @@ export default defineComponent({
           }
           else if (duration - currentTime < videoObj.outro) {
             if (this.currentVideoIndex < this.videos.length - 1) {
-              this.changeVideo(this.currentVideoIndex + 1)
+              this.playNext(this.currentVideoIndex + 1)
             }
           }
         }
@@ -116,7 +116,7 @@ export default defineComponent({
 
       this.player.on('ended', () => {
         if (this.currentVideoIndex < this.videos.length - 1) {
-          this.changeVideo(this.currentVideoIndex + 1)
+          this.playNext(this.currentVideoIndex + 1)
         } else {
           localStorage.removeItem('videoPlaybackState')
         }
@@ -130,9 +130,30 @@ export default defineComponent({
     },
     
     changeVideo(index: number) {
-      try {
-        this.currentVideoIndex = index
-        this.initPlayer(this.videos[index], index)
+      try {   
+         
+         this.currentVideoIndex = index
+         this.initPlayer(this.videos[index], index) 
+
+        } catch (error) {
+          console.error('视频切换失败:', error)
+        } 
+      },
+      
+      
+      playNext(index: number ) {
+        try { 
+          this.currentVideoIndex = index
+          console.log('当前播放的index：',index);
+
+          
+          const currentTime = this.player?.currentTime ||0 
+          localStorage.setItem('videoPlaybackState', JSON.stringify({    index,   currentTime  }))
+
+      // 通知父组件更新当前索引
+      this.$emit('update:updateVideoIndex', index)
+
+         this.player?.playNext({index,url: this.videos[index].url  }) 
       } catch (error) {
         console.error('视频切换失败:', error)
       }
@@ -141,7 +162,7 @@ export default defineComponent({
   
   watch: {
     currentIndex(newVal: number) {
-      this.changeVideo(newVal)
+      this.playNext(newVal)
     }
   },
   

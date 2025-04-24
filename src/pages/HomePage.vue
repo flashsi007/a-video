@@ -10,6 +10,7 @@
       :videos="videos" 
       :currentIndex="currentVideoIndex"
       @update:currentIndex="(index: number) => currentVideoIndex = index"
+      @update:updateVideoIndex="(index: number) => updateVideoIndex(index)"
     />
     </div>
 
@@ -53,7 +54,7 @@
         :class="[
           'group relative p-4 border rounded-xl cursor-pointer transition-all duration-300 shadow-md',
           'hover:shadow-lg hover:-translate-y-1',
-          currentVideoIndex === index 
+          videoIndex === index 
             ? 'bg-gradient-to-br from-yellow-100 to-yellow-50 border-yellow-300 ring-2 ring-yellow-200' 
             : 'bg-white border-gray-200 hover:border-gray-300'
         ]"
@@ -78,7 +79,7 @@
         </div>
 
         <div>
-          <span v-if="currentVideoIndex === index" class="  py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800 animate-pulse">
+          <span v-if="videoIndex === index" class="  py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800 animate-pulse">
             正在播放
           </span>
         </div>
@@ -118,6 +119,7 @@ export default defineComponent({
     const introTime = ref(loadCache('introTime', 0))
     const outroTime = ref(loadCache('outroTime', 0))
     const currentVideoIndex = ref(loadCache('currentVideoIndex', 0))
+    const videoIndex = ref(loadCache('videoIndex', 0))
     const videos = ref<Array<{url: string, intro: number, outro: number}>>([])
 
     const updateVideos = () => {
@@ -138,6 +140,12 @@ export default defineComponent({
       videoPlayer.value?.updateVideos(newVideos)
     }
 
+    const updateVideoIndex = (index: number) => {
+      // currentVideoIndex.value = index
+      videoIndex.value = index
+      console.log( 'videoIndex', videoIndex.value);
+      
+    }
     // 初始化videos
     updateVideos()
 
@@ -146,23 +154,28 @@ export default defineComponent({
       localStorage.setItem('videoUrls', JSON.stringify(videoUrls.value))
       localStorage.setItem('introTime', JSON.stringify(introTime.value))
       localStorage.setItem('outroTime', JSON.stringify(outroTime.value))
-      localStorage.setItem('currentVideoIndex', JSON.stringify(currentVideoIndex.value))
+      localStorage.setItem('currentVideoIndex', JSON.stringify(currentVideoIndex.value)) 
       updateVideos()
     })
 
     const playVideo = (index: number) => {
       currentVideoIndex.value = index
+      videoIndex.value = index
       videoPlayer.value?.changeVideo(index)
     }
+
+
 
     return {
       videoUrls,
       introTime,
       outroTime,
       currentVideoIndex,
+      videoIndex,
       videos,
       videoPlayer,
       updateVideos,
+      updateVideoIndex,
       playVideo
     }
   }
