@@ -83,9 +83,9 @@ export default defineComponent({
         playbackRate: [0.5, 0.75, 1, 1.5, 2],
         plugins: [HlsPlugin],
         pip: true,
-        playNext: {
-        urlList:  this.videos.map(video => video.url),
-    },
+    //     playNext: {
+    //     urlList:  this.videos.map(video => video.url),
+    // },
         hls: {
           retryCount: 3,
           maxRetryCount: 3
