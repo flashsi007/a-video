@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from "vue"
+import { ref } from "vue"
 import { invoke } from "@tauri-apps/api/core"
 import { RouterView } from 'vue-router'
 import { Window } from "@tauri-apps/api/window"
@@ -13,25 +13,7 @@ async function greet() {
   greetMsg.value = await invoke("greet", { name: name.value })
 }
 
-// 拦截所有a标签点击，使用Tauri shell.open在webview中打开
-async function handleLinkClick(e: MouseEvent) {
-  const target = e.target as HTMLElement
-  if (target && target.tagName === 'A') { 
-    const href = (target as HTMLAnchorElement).href
-    if (href && href.startsWith('http')) {
-      e.preventDefault()
-      // Webview (href)
-      // loading embedded asset:
-      
-    }
-  }
-}
-onMounted(() => {
-  window.addEventListener('click', handleLinkClick, true)
-})
-onBeforeUnmount(() => {
-  window.removeEventListener('click', handleLinkClick, true)
-})
+ 
 
 // 窗口控制方法
 async function minimizeWindow() {
@@ -90,6 +72,13 @@ async function closeWindow() {
         class="px-4 py-2 rounded hover:bg-gray-100 transition text-white hover:text-primary"
       >
         My Pages
+      </router-link>
+
+      <router-link 
+        to="/collect" 
+        class="px-4 py-2 rounded hover:bg-gray-100 transition text-white hover:text-primary"
+      >
+      collect
       </router-link>
     </nav>
      

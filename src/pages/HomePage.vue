@@ -10,7 +10,7 @@
         <span class="font-semibold text-lg tracking-wide">影视播放器</span>
       </div>
       <div class="text-gray-400 text-sm">
-        <a href="http://ffzy5.tv/" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">ffzy5.tv</a>
+        <!-- <a href="http://ffzy5.tv/" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">ffzy5.tv</a> -->
       </div>
     </div>
 
@@ -120,12 +120,67 @@
         </div>
       </div>
     </div>
+
+    <div>
+    <a href="https://1080zyk4.com/" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">1080资源网</a>
+    <hr/> 
+    <a href="http://bdzy.com/" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">百度云资源采集网</a>
+    <hr/> 
+    <a href="http://www.tiankongzy.com/" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">天空资源采集网</a>
+    <hr/> 
+    <a href="https://huaweiba.live/" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">华为吧影视资源站</a>
+    <hr/> 
+    <a href="http://help.feisuzyapi.com/" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">飞速资源网</a>
+    <hr/> 
+    <a href="http://www.lzzy.tv" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">量子资源网</a>
+    <hr/> 
+    <a href="http://www.ffzy.tv" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">非凡资源网</a>
+    <hr/> 
+    <a href="http://www.wujinzy.net" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">无尽资源网</a>
+    <hr/> 
+    <a href="http://huyazy.net" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">虎牙资源网</a>
+    <hr/> 
+    <a href="https://www.xinlangzy.com" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">新浪资源网</a>
+    <hr/> 
+    <a href="https://360zy.vip/" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">360资源网</a>
+    <hr/> 
+    <a href="http://bdzy.com/" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">百度云资源</a>
+    <hr/> 
+    <a href="https://1080zyk1.com/" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">优质资源库</a>
+    <hr/> 
+    <a href="https://moduzy.cc/" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">魔都资源网</a>
+    <hr/> 
+    <a href="https://ikunzy.net/" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">ikun资源站</a>
+    <hr/> 
+    <a href="https://www.kuaiyunzy.com/" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">快云资源网</a>
+    <hr/> 
+    <a href="https://yszzq.leshizy.top/" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">乐视资源网</a>
+    <hr/> 
+    <a href="https://ikunzy.net/" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">ikun资源站</a>
+    <hr/> 
+    <a href="https://yycmszyw.com/" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">优优资源网</a>
+    <hr/> 
+    <a href="https://aosikazy1.com" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">奥斯卡资源站</a>
+    <hr/> 
+    <a href="https://gqzy.me/" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">搞起资源站</a>
+    <hr/> 
+    <a href="https://didizy.com/" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">滴滴资源站</a>
+    <hr/> 
+    <a href="https://www.taopianzy.com/" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">淘片资源网</a>
+    <a href="https://taopianzy.vip" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">备用地址</a>
+    <a href="https://taopianzy.net" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">备用地址</a>
+    <hr/> 
+    <a href="http://www.bbkdj.com/help" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">步步高升影视资源采集网站</a>
+    <hr/> 
+</div>
+
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref, watchEffect } from 'vue'
 import { ElInput, ElSlider, ElForm, ElFormItem } from 'element-plus'
+// @ts-ignore
 import { VideoCamera, Setting, Film } from '@element-plus/icons-vue'
 import VideoPlayer from '@/components/VideoPlayer.vue' 
 
@@ -219,9 +274,6 @@ export default defineComponent({
 </script>
 
 /*
-https://svipsvip.ffzy-online5.com/20241014/33610_ef152a79/index.m3u8
-https://svipsvip.ffzy-online5.com/20241014/33611_a776d3cf/index.m3u8
-https://svipsvip.ffzy-online5.com/20241014/33612_804d1c03/index.m3u8
-https://svipsvip.ffzy-online5.com/20241014/33613_d957c740/index.m3u8
-https://svipsvip.ffzy-online5.com/20241014/33614_0d8a8951/index.m3u8
+
+ ！
 */
