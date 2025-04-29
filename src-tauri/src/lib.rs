@@ -1,11 +1,15 @@
 
 mod crawler;
 mod db;
+mod services;
 use crate::crawler::ffzy;
-use db::db_config::DbConfig;
-use tauri::Manager;
-use tauri::Emitter;
+use db::db_config::DbConfig; 
+use crate::services::vod_service;
+use std::fs;
+use std::path::PathBuf;
 
+use tauri::Manager;
+use tauri::Emitter; 
 #[tauri::command]
 fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
@@ -14,6 +18,12 @@ fn greet(name: &str) -> String {
 #[tauri::command]
 async fn crawl_ffzy(window: tauri::Window) -> Result<String, String> {
     ffzy::run(window).await
+}
+ 
+#[tauri::command]
+fn get_vod_types() -> Result<String, String> { 
+    fs::read_to_string("src/crawler/vod_type.json").map_err(|e| format!("读取vod_type.json失败: {}", e))
+ 
 }
 
 #[tauri::command]
@@ -34,8 +44,11 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![greet, 
             crawl_ffzy, 
-            check_and_set_db_path
+            check_and_set_db_path, 
+            vod_service::query_videos,
+            get_vod_types,
             ])
+
         .setup(|app_handle| {
             let window = app_handle.get_webview_window("main").unwrap();
             tauri::async_runtime::spawn(async move {

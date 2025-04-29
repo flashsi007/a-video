@@ -59,27 +59,29 @@ async function closeWindow() {
       </div>
     </div>
    
-    <!-- 顶部导航栏 -->
-    <nav class="fixed top-0 left-0 right-0 bg-background-light shadow-card flex justify-center space-x-4 z-50 border-b border-gray-800" style="margin-top:2rem;">
-      <router-link 
-        to="/" 
-        class="px-4 py-2 rounded hover:bg-gray-100 transition text-white hover:text-primary"
-      >
-        Home
+    <!-- 顶部导航栏 --> 
+    <nav class="fixed top-0 left-0 right-0   
+                 shadow-card flex  z-50 
+                 border-b justify-center space-x-4" 
+    style="margin-top:2rem;background:rgba(30,32,38,0.95); border-bottom:1px solid #23272f;">
+      <router-link  to="/"    class="flex justify-center items-center" >
+          <VideoCamera class="text-primary mr-2" style="width: 1.5rem; height:1.5rem;" />
+          <span class="font-semibold text-lg tracking-wide">影视资源库</span>
       </router-link>
-      <router-link 
-        to="/mypages" 
-        class="px-4 py-2 rounded hover:bg-gray-100 transition text-white hover:text-primary"
-      >
-        My Pages
+     
+     
+
+      <router-link   to="/collect"  class="flex justify-center items-center"   >
+        <Film class="text-primary mr-2" style="width: 1.5rem; height:1.5rem;" />
+        <span class="font-semibold text-lg tracking-wide">片源更新</span> 
       </router-link>
 
-      <router-link 
-        to="/collect" 
-        class="px-4 py-2 rounded hover:bg-gray-100 transition text-white hover:text-primary"
-      >
-      collect
+
+      <router-link  to="/mypages"  class="flex justify-center items-center" >
+        <Setting class="text-primary mr-2" style="width: 1.5rem; height:1.5rem;" />
+        <span class="font-semibold text-lg tracking-wide">设置</span>
       </router-link>
+
     </nav>
      
    
@@ -89,7 +91,10 @@ async function closeWindow() {
     </main>
   </div>
 </template>
-
+<script lang="ts">
+// @ts-ignore  
+import {  VideoCamera, Film,Setting } from '@element-plus/icons-vue' 
+</script>
 <style>
 .tauri-titlebar {
   /* opacity: 0; */

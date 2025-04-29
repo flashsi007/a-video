@@ -1,279 +1,245 @@
 <template>
   <div class="min-h-screen bg-background text-white font-sans">
-    <!-- 顶部信息栏  sticky top-0 z-30-->
-    <div class="bg-background-light p-4 flex 
-                  justify-between items-center 
-                  border-b border-gray-800 
-                  shadow-card ">
-      <div class="flex items-center space-x-3">
-        <VideoCamera class="text-primary" style="width: 2rem; height: 2rem;" />
-        <span class="font-semibold text-lg tracking-wide">影视播放器</span>
-      </div>
-      <div class="text-gray-400 text-sm">
-        <!-- <a href="http://ffzy5.tv/" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">ffzy5.tv</a> -->
-      </div>
-    </div>
-
-    <!-- 主内容区 -->
-    <div class="max-w-7xl mx-auto px-4 py-6">
-      <!-- 视频播放器 -->
-      <div class="mb-8 bg-black rounded-2xl overflow-hidden shadow-2xl border-2 border-background-card ring-2 ring-primary/10">
-        <VideoPlayer 
-          ref="videoPlayer"
-          :videos="videos" 
-          :currentIndex="currentVideoIndex"
-          @update:currentIndex="(index: number) => currentVideoIndex = index"
-          @update:updateVideoIndex="(index: number) => updateVideoIndex(index)"
-        />
-      </div>
-
-      <!-- 视频设置表单 -->
-      <div class="bg-background-card rounded-2xl p-8 mb-8 shadow-card border border-background-light">
-        <h2 class="text-xl font-semibold mb-6 text-primary flex items-center">
-          <Setting class="mr-2" style="width: 1.2rem; height: 1.2rem;" />
-          视频设置
-        </h2>
-        <el-form class="space-y-8">
-          <el-form-item label="视频URL列表" class="block">
-            <div class="text-gray-400 text-sm mb-2">每行输入一个视频URL</div>
-            <el-input
-              type="textarea"
-              :rows="5"
-              v-model="videoUrls"
-              placeholder="https://example.com/video.m3u8"
-              @change="updateVideos"
-              class="w-full bg-background-light border-background-card text-gray-200 focus:ring-primary focus:border-primary"
-            />
-          </el-form-item>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <el-form-item label="片头时间(秒)" class="block">
-              <div class="flex items-center justify-between mb-1">
-                <span class="text-gray-400 text-sm">跳过片头</span>
-                <span class="text-primary font-medium">{{introTime}}秒</span>
+    <!-- 顶部信息栏 -->
+    <div class=" border-gray-800  bg-background-light     border-b shadow-card rounded-lg">
+        <div v-for="(item,index) in vodTypes" :key="index"> 
+          <div class="flex space-x-2">
+             <VideoCamera class="text-primary ml-2" style="width: 1.5rem; height: 1.5rem;" />
+              <div>
+                    <span>{{ item.title }} : </span>
+                    <span v-for="vodTypeItem in item.list" :key="vodTypeItem.id">
+                      <span @click="handleVodTypeClick(vodTypeItem.name,vodTypeItem.id)" 
+                      :class="vodTypeItem.id== vodTypesItemId? 'vodTypeItem text-[1rem] mr-1 cursor-pointer text-primary':'vodTypeItem text-[1rem] mr-1 cursor-pointer'">
+                        {{ vodTypeItem.name }}
+                      </span>
+                    </span>
               </div>
-              <el-slider
-                v-model="introTime"
-                :max="300"
-                show-input
-                class="custom-slider"
-              />
-            </el-form-item>
-            <el-form-item label="片尾时间(秒)" class="block">
-              <div class="flex items-center justify-between mb-1">
-                <span class="text-gray-400 text-sm">跳过片尾</span>
-                <span class="text-primary font-medium">{{outroTime}}秒</span>
-              </div>
-              <el-slider
-                v-model="outroTime"
-                :max="300"
-                show-input
-                class="custom-slider"
-              />
-            </el-form-item>
-          </div>
-        </el-form>
-      </div>
-
-      <!-- 视频列表 -->
-      <div class="mb-8">
-        <div class="flex items-center justify-between mb-6">
-          <h2 class="text-xl font-semibold text-primary flex items-center">
-            <Film class="mr-2" style="width: 1.2rem; height: 1.2rem;" />
-            视频列表 <span class="ml-2 text-sm text-gray-400">({{videos.length}}个视频)</span>
-          </h2>
+        </div> 
         </div>
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
-          <div 
-            v-for="(video, index) in videos" 
-            :key="index"
-            @click="playVideo(index)"
-            :class="[
-              'group relative p-4 border rounded-2xl cursor-pointer transition-all duration-300 shadow-card',
-              'hover:bg-primary/10 hover:border-primary hover:scale-105 transform',
-              videoIndex === index 
-                ? 'bg-gradient-to-br from-primary/20 to-primary/5 border-primary ring-2 ring-primary/40' 
-                : 'bg-background-card border-background-light'
-            ]"
-          >
-            <!-- 视频缩略图区域 --> 
-            <div class="aspect-video bg-background-light rounded-lg mb-3 flex items-center justify-center overflow-hidden shadow-inner">
-              <VideoCamera class="text-primary" style="width: 2rem; height: 2rem;" />
+        <div class=" text-gray-400 text-sm"></div>
+      </div>
+      <!-- 主内容区 -->
+      <div class="max-w-7xl mx-auto px-4 py-6">
+        <div class="mb-8">
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-xl font-semibold text-primary flex items-center">
+              <Film class="mr-2" style="width: 1.2rem; height: 1.2rem;" />
+              视频列表 <span class="ml-2 text-sm text-gray-400">({{ videos.length }}个视频)</span>
+            </h2>
+            <div class="flex items-center space-x-2">
+              <el-input v-model="searchKeyword" placeholder="搜索视频标题/演员/类型" clearable size="small"
+                class="rounded-lg bg-background-light border border-background-card text-gray-200 focus:ring-primary focus:border-primary shadow-inner"
+                style="width: 220px;" @keyup.enter.native="onSearch" />
+              <el-button type="primary" size="small" @click="onSearch"
+                class="rounded-lg px-5 py-2 font-medium shadow-card bg-primary hover:bg-primary/80 border-none">搜索</el-button>
             </div>
-            <div class="space-y-2">
-              <h3 class="font-medium text-gray-200 group-hover:text-primary truncate">
-                视频 {{ index + 1 }}
-              </h3>
-              <p class="text-xs text-gray-500 truncate">
-                ID: {{ video.url.split('/')?.slice(-2, -1)[0] }}
-              </p>
-              <div class="pt-1">
-                <span 
-                  v-if="videoIndex === index" 
-                  class="inline-flex items-center px-2 py-1 text-xs font-medium rounded-full bg-primary/20 text-primary animate-pulse"
-                >
-                  <span class="w-1.5 h-1.5 bg-primary rounded-full mr-1 animate-ping"></span>
-                  正在播放
-                </span>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-5 gap-6">
+            <div v-for="(video, index) in videos" @click="handleVodItem(video)" :key="video.vod_id || index" class="group relative p-4 border rounded-2xl cursor-pointer   transition-all duration-300  shadow-card hover:bg-primary/10 hover:border-primary hover:scale-105  transform bg-background-card border-background-light">
+              <div
+                class="aspect-video bg-background-light rounded-lg mb-3 flex items-center justify-center overflow-hidden shadow-inner w-full h-52">
+                <img v-if="video.img_url" :src="video.img_url" alt="封面" class="object-cover w-full h-full" />
+              </div>
+              <div class="space-y-2">
+                <h3 class="font-medium text-gray-200 group-hover:text-primary truncate">
+                  {{ video.title }}
+                </h3>
+                <p class="text-xs text-gray-500 truncate">
+                  类型: {{ video.type_name }}
+                </p>
               </div>
             </div>
+          </div>
+
+          <div class="flex justify-center mt-8">
+            <el-pagination @current-change="currentChange" background layout="prev, pager, next" :page-size="pageSize"
+              :pager-count="7" :total="total"
+              class="rounded-xl bg-background-card shadow-card px-6 py-3 border border-background-light text-gray-200"
+              prev-text="上一页" next-text="下一页" />
           </div>
         </div>
       </div>
     </div>
-
-    <div>
-    <a href="https://1080zyk4.com/" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">1080资源网</a>
-    <hr/> 
-    <a href="http://bdzy.com/" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">百度云资源采集网</a>
-    <hr/> 
-    <a href="http://www.tiankongzy.com/" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">天空资源采集网</a>
-    <hr/> 
-    <a href="https://huaweiba.live/" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">华为吧影视资源站</a>
-    <hr/> 
-    <a href="http://help.feisuzyapi.com/" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">飞速资源网</a>
-    <hr/> 
-    <a href="http://www.lzzy.tv" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">量子资源网</a>
-    <hr/> 
-    <a href="http://www.ffzy.tv" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">非凡资源网</a>
-    <hr/> 
-    <a href="http://www.wujinzy.net" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">无尽资源网</a>
-    <hr/> 
-    <a href="http://huyazy.net" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">虎牙资源网</a>
-    <hr/> 
-    <a href="https://www.xinlangzy.com" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">新浪资源网</a>
-    <hr/> 
-    <a href="https://360zy.vip/" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">360资源网</a>
-    <hr/> 
-    <a href="http://bdzy.com/" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">百度云资源</a>
-    <hr/> 
-    <a href="https://1080zyk1.com/" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">优质资源库</a>
-    <hr/> 
-    <a href="https://moduzy.cc/" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">魔都资源网</a>
-    <hr/> 
-    <a href="https://ikunzy.net/" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">ikun资源站</a>
-    <hr/> 
-    <a href="https://www.kuaiyunzy.com/" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">快云资源网</a>
-    <hr/> 
-    <a href="https://yszzq.leshizy.top/" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">乐视资源网</a>
-    <hr/> 
-    <a href="https://ikunzy.net/" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">ikun资源站</a>
-    <hr/> 
-    <a href="https://yycmszyw.com/" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">优优资源网</a>
-    <hr/> 
-    <a href="https://aosikazy1.com" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">奥斯卡资源站</a>
-    <hr/> 
-    <a href="https://gqzy.me/" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">搞起资源站</a>
-    <hr/> 
-    <a href="https://didizy.com/" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">滴滴资源站</a>
-    <hr/> 
-    <a href="https://www.taopianzy.com/" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">淘片资源网</a>
-    <a href="https://taopianzy.vip" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">备用地址</a>
-    <a href="https://taopianzy.net" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">备用地址</a>
-    <hr/> 
-    <a href="http://www.bbkdj.com/help" target="_blank" class="hover:text-primary transition-colors underline underline-offset-2">步步高升影视资源采集网站</a>
-    <hr/> 
-</div>
-
-  </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watchEffect } from 'vue'
-import { ElInput, ElSlider, ElForm, ElFormItem } from 'element-plus'
+import { defineComponent, ref, onMounted } from 'vue'
 // @ts-ignore
 import { VideoCamera, Setting, Film } from '@element-plus/icons-vue'
-import VideoPlayer from '@/components/VideoPlayer.vue' 
+// @ts-ignore
+import { invoke } from '@tauri-apps/api/core'
+import { useRouter } from 'vue-router'
+
+
+
 
 export default defineComponent({
   name: 'HomePage',
   components: {
-    VideoPlayer,
-    ElInput,
-    ElSlider,
-    ElForm,
-    ElFormItem
+    VideoCamera,
+    Film
   },
   setup() {
-    // 从localStorage读取缓存
-    const loadCache = (key: string, defaultValue: any) => {
+    const videos = ref<Array<any>>([])
+    const loading = ref(false)
+    const currentPage = ref(1)
+    const pageSize = ref(50)
+    const total = ref(0)
+    const searchKeyword = ref('')
+    const vodTypes = ref<Array<any>>([
+      { title: "动漫", list: [] },
+      { title: "电影", list: [] },
+      { title: "电视剧", list: [] },
+      { title: "综艺", list: [] }
+    ])
+    const vodTypesItem = ref('')
+    const vodTypesItemId = ref(null)
+    const router = useRouter()
+    
+    const fetchVideos = async () => {
+      loading.value = true
       try {
-        const cached = localStorage.getItem(key)
-        return cached ? JSON.parse(cached) : defaultValue
-      } catch {
-        return defaultValue
+        let params: any = {
+          page: currentPage.value,
+          page_size: pageSize.value,
+          keyword: searchKeyword.value
+        }
+
+        if (vodTypesItem.value) {
+          params.type_name = (vodTypesItem.value).trim()
+        }
+
+        const result: any = await invoke('query_videos', {
+          query: params
+        })
+
+        if (result && typeof result === 'object' && Array.isArray(result.data)) {
+          videos.value = result.data
+          total.value = result.total || 0
+          pageSize.value = result.page_size || 50
+          currentPage.value = result.pager_count || 1
+        } else if (Array.isArray(result)) {
+          videos.value = result
+          total.value = result.length
+        } else {
+          videos.value = []
+          total.value = 0
+        }
+      } catch (e) {
+        videos.value = []
+        total.value = 0
+      } finally {
+        loading.value = false
       }
     }
 
-    const videoPlayer = ref<typeof VideoPlayer>()
-    const videoUrls = ref(loadCache('videoUrls', ``))
-
-    const introTime = ref(loadCache('introTime', 0))
-    const outroTime = ref(loadCache('outroTime', 0))
-    const currentVideoIndex = ref(loadCache('currentVideoIndex', 0))
-    const videoIndex = ref(loadCache('videoIndex', 0))
-    const videos = ref<Array<{url: string, intro: number, outro: number}>>([])
-
-    const updateVideos = () => {
-      const newVideos = videoUrls.value 
-        .split('\n')
-        .filter((url: string) => url.trim())
-        .map((url: string) => ({
-          url: url.trim(),
-          intro: introTime.value,
-          outro: outroTime.value
-        }))
+    const getVodTypes = async () => {
+      try {
+        let result: any = await invoke('get_vod_types')
+        result = JSON.parse(result)
 
 
-      
-      videos.value = newVideos
+        for (let i = 0; i < result.length; i++) {
+          let item = result[i]
 
+          if (i <= 3) {
+            vodTypes.value[0].list.push(item)
+          }
 
-      videoPlayer.value?.updateVideos(newVideos)
+          if (i > 3 && i <= 10) {
+            vodTypes.value[1].list.push(item)
+          }
+
+          if (i > 10 && i <= 19) {
+            vodTypes.value[2].list.push(item)
+          }
+          if (i > 19 && i <= 25) {
+            vodTypes.value[3].list.push(item)
+          }
+        }
+      } catch (e) {
+        console.log(e);
+      }
     }
 
-    const updateVideoIndex = (index: number) => {
-      // currentVideoIndex.value = index
-      videoIndex.value = index
-      console.log( 'videoIndex', videoIndex.value);
+    const handleVodItem = (video: any) => {
+     let video_urls:string[] = video.video_urls .split(',')   
+       let url_len = (video_urls[video_urls.length-1]).replace(/^["\[]+|["\]]+$/g, '');
+      const match = video_urls[0].match(/(https?:\/\/[^"\s]+)/) || []; 
+      const url = match[1];
+        video_urls[0] = url;
+        video_urls[video_urls.length-1] = url_len
+        video_urls = video_urls.map((str)=>{
+          let url = str.replace(/["\\]/g, '')
+           if(url){
+            return url
+           } 
+          return str
+        })
+ 
+        
+ 
       
+      router.push({
+        path: '/pla',
+        query: {
+          id: video.vod_id,
+          title: video.title, 
+          video_urls: video.video_urls
+        }
+      })  
     }
-    // 初始化videos
-    updateVideos()
 
-    // 监听数据变化并更新缓存
-    watchEffect(() => {
-      localStorage.setItem('videoUrls', JSON.stringify(videoUrls.value))
-      localStorage.setItem('introTime', JSON.stringify(introTime.value))
-      localStorage.setItem('outroTime', JSON.stringify(outroTime.value))
-      localStorage.setItem('currentVideoIndex', JSON.stringify(currentVideoIndex.value)) 
-      updateVideos()
+    const handleVodTypeClick = (type: string,id:any) => {
+      currentPage.value = 1
+      vodTypesItem.value = type
+      vodTypesItemId.value = id
+       fetchVideos()
+    }
+
+    const onPageChange = (page: number) => {
+      currentPage.value = page
+      fetchVideos()
+    }
+
+    const onSearch = () => {
+      vodTypesItem.value = ""
+      currentPage.value = 1
+      fetchVideos()
+    }
+
+    const currentChange = (page: number) => {
+      currentPage.value = page
+      fetchVideos()
+    }
+
+
+    onMounted(() => {
+      getVodTypes()
+      fetchVideos()
     })
-
-    const playVideo = (index: number) => {
-      currentVideoIndex.value = index
-      videoIndex.value = index
-      videoPlayer.value?.changeVideo(index)
-    }
-
-
-
     return {
-      videoUrls,
-      introTime,
-      outroTime,
-      currentVideoIndex,
-      videoIndex,
       videos,
-      videoPlayer,
-      updateVideos,
-      updateVideoIndex,
-      playVideo
+      loading,
+      currentPage,
+      pageSize,
+      total,
+      searchKeyword,
+      vodTypes,
+      vodTypesItemId,
+      handleVodItem,
+      handleVodTypeClick,
+      currentChange,
+      onPageChange,
+      getVodTypes,
+      onSearch
     }
   }
 })
 </script>
-
-/*
-
- ！
-*/
+<style>
+.vodTypeItem:hover {
+  color: #FF4c4c;
+}
+</style>

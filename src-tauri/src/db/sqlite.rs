@@ -41,13 +41,14 @@ impl SqliteDB {
     
     // 插入视频信息到数据库
     pub async fn insert_video_info(&self, video_info: &VideoInfo) -> Result<()> {
-        let sql = "INSERT INTO video_info (vod_id, title, img_url, type_name, year, area, language, description, director, actor, video_urls) 
-                 VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11)";
+        let sql = "INSERT INTO video_info (vod_id,vod_type_id, title, img_url, type_name, year, area, language, description, director, actor, video_urls) 
+                 VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12)";
         
         self.execute(
             sql,
             &[
                 &video_info.vod_id as &dyn rusqlite::ToSql,
+                &video_info.vod_type_id,
                 &video_info.title,
                 &video_info.img_url,
                 &video_info.type_name,
@@ -65,11 +66,12 @@ impl SqliteDB {
     }
 
     // 初始化数据库表
-    pub fn init_tables(&self) -> Result<()> {
+    pub fn init_tables(&self) -> Result<()> { 
         let create_video_info_table = "
             CREATE TABLE IF NOT EXISTS video_info (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                vod_id TEXT NOT NULL,
+                vod_id TEXT NOT NULL, 
+                vod_type_id TEXT NOT NULL,
                 title TEXT NOT NULL,
                 img_url TEXT NOT NULL,
                 type_name TEXT NOT NULL,

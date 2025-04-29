@@ -23,8 +23,8 @@ pub fn build_type_urls(json_path: &str) -> Result<Vec<String>, Box<dyn std::erro
 pub fn generate_paged_urls(base_url: &str, total_pages: u32) -> Vec<String> {
     (1..=total_pages)
         .map(|page| {
-            let base = base_url.trim_end_matches("1.html");
-            format!("{}{}.html", base, page)
+            let base = base_url.trim_end_matches("/1.html");
+            format!("{}/page/{}.html", base, page)
         })
         .collect()
 }
