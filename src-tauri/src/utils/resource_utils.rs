@@ -27,7 +27,7 @@ impl From<serde_json::Error> for ResourceError {
 }
 
 // 获取资源文件路径
-pub fn get_resource_path(app_handle: &AppHandle, relative_path: &str) -> Result<PathBuf, ResourceError> {
+pub fn get_resource_path(  app_handle: &AppHandle,   relative_path: &str, ) -> Result<PathBuf, ResourceError> {
     let mut path = app_handle
         .path()
         .resource_dir()
@@ -43,13 +43,19 @@ pub fn get_resource_path(app_handle: &AppHandle, relative_path: &str) -> Result<
 }
 
 // 读取文本文件
-pub fn read_resource_file(app_handle: &AppHandle, relative_path: &str) -> Result<String, ResourceError> {
+pub fn read_resource_file(
+    app_handle: &AppHandle,
+    relative_path: &str,
+) -> Result<String, ResourceError> {
     let path = get_resource_path(app_handle, relative_path)?;
     fs::read_to_string(path).map_err(Into::into)
 }
 
 // 读取并解析 JSON 文件
-pub fn read_resource_json<T>(app_handle: &AppHandle, relative_path: &str) -> Result<T, ResourceError>
+pub fn read_resource_json<T>(
+    app_handle: &AppHandle,
+    relative_path: &str,
+) -> Result<T, ResourceError>
 where
     T: DeserializeOwned,
 {

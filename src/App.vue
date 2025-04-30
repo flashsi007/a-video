@@ -29,7 +29,7 @@
    
     <!-- 顶部导航栏 --> 
     <nav class="fixed top-0 left-0 right-0   
-                 shadow-card flex  z-50 
+                 shadow-card flex  z-50  py-2
                  border-b justify-center space-x-4" 
     style="margin-top:2rem;background:rgba(30,32,38,0.95); border-bottom:1px solid #23272f;">
       <div    class="flex justify-center items-center cursor-pointer"  @click="currentComponent = HomePage" >
@@ -67,12 +67,12 @@
 
 <script setup lang="ts">  
 import {VideoItem} from "./types"
-import { ref } from 'vue' 
+import { ref ,onMounted} from 'vue' 
 import HomePage from '@/pages/HomePage.vue';
 import CollectPage from '@/pages/CollectPage.vue';
 import PlayPage from '@/pages/PlayPage.vue';
 import MyPages from '@/pages/MyPages.vue'; 
-import { useVideoStore } from './stores/videoStore' 
+import { useVideoStore } from './stores/videoStore'  
 
 const videoStore = useVideoStore() 
 const currentComponent = ref(HomePage);
@@ -85,9 +85,7 @@ const handleSendData = (data:VideoItem) => {
 
 
 
-import { Window } from "@tauri-apps/api/window"
-// @ts-ignore
-import { Webview  } from "@tauri-apps/api/webview"
+import { Window } from "@tauri-apps/api/window" 
 const appWindow = Window.getCurrent();
 
  
@@ -107,6 +105,12 @@ async function toggleMaximizeWindow() {
 async function closeWindow() {
   await appWindow.close()
 }
+ 
+onMounted(() => {
+  // initDBPath ()
+  
+ 
+})
 
 </script>
 <style scoped>

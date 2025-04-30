@@ -1,5 +1,5 @@
 // 数据模型定义示例
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct VideoInfo {
@@ -15,7 +15,10 @@ pub struct VideoInfo {
     pub description: String,
     pub director: String,
     pub actor: String,
-    pub video_urls: String // 可以用JSON字符串存储Vec<String>
+    pub video_urls: String,      // 可以用JSON字符串存储Vec<String>
+    pub lzzy_video_urls: String, // 量子资源 
+    pub created_at: String,
+    pub updated_at: String
 }
 impl VideoInfo {
     pub fn from_row(row: &rusqlite::Row) -> Result<VideoInfo, rusqlite::Error> {
@@ -33,6 +36,9 @@ impl VideoInfo {
             director: row.get("director")?,
             actor: row.get("actor")?,
             video_urls: row.get("video_urls")?,
+            lzzy_video_urls: row.get("lzzy_video_urls")?, // 量子资源
+            created_at: row.get("created_at")?,
+            updated_at: row.get("updated_at")?,
         })
     }
 }

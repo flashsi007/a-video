@@ -48,6 +48,14 @@
                 <p class="text-xs text-gray-500 truncate">
                   类型: {{ video.type_name }}
                 </p>
+
+                <p class="text-xs text-gray-500 truncate">
+                  年代: {{ video.year }}
+                </p>
+
+                <p class="text-xs text-gray-500 truncate">
+                  更新: {{ video.updated_at }}
+                </p>
               </div>
             </div>
           </div>
@@ -65,12 +73,25 @@
 
 <script lang="ts">
 import { defineComponent, ref, onMounted } from 'vue'
-// @ts-ignore
-import { VideoCamera, Setting, Film } from '@element-plus/icons-vue'
-// @ts-ignore
-import { invoke } from '@tauri-apps/api/core'   
 
+import { VideoCamera, Film } from '@element-plus/icons-vue' 
+import { invoke } from '@tauri-apps/api/core'   
+// @ts-ignore
+import { open } from '@tauri-apps/plugin-dialog';
  
+function extractUrls(str:string): Array<string> {
+    // 使用正则表达式匹配以 .m3u8 结尾的 URL
+    const urlRegex = /https?:\/\/[\w\-_]+(\.[\w\-_]+)+(?:[\w\-\.,@?^=%&:/~\+#]*[\w\-\@?^=%&/~\+#])?\.m3u8/g;
+    const urls = [];
+    let match;
+
+    // 遍历匹配结果并添加到数组中
+    while ((match = urlRegex.exec(str)) !== null) {
+        urls.push(match[0]);
+    }
+
+    return urls;
+}
 
 export default defineComponent({
   name: 'Home',
@@ -86,7 +107,7 @@ export default defineComponent({
     const currentPage = ref(1)
     const pageSize = ref(50)
     const total = ref(0)
-    const searchKeyword = ref('')
+    const searchKeyword = ref('动作片')
     const vodTypes = ref<Array<any>>([
       { title: "动漫", list: [] },
       { title: "电影", list: [] },
@@ -162,35 +183,15 @@ export default defineComponent({
       }
     }
 
-    const handleVodItem = (video: any) => {
-     let video_urls:string[] = video.video_urls .split(',')   
-       let url_len = (video_urls[video_urls.length-1]).replace(/^["\[]+|["\]]+$/g, '');
-      const match = video_urls[0].match(/(https?:\/\/[^"\s]+)/) || []; 
-      const url = match[1];
-        video_urls[0] = url;
-        video_urls[video_urls.length-1] = url_len
-        video_urls = video_urls.map((str)=>{
-          let url = str.replace(/["\\]/g, '')
-           if(url){
-            return url
-           } 
-          return str
-        })
- 
+    const handleVodItem = (video: any) => { 
+   
          // 发布 
         emit('sendData', {
           id: video.vod_id,
           title: video.title,
-          video_urls: video_urls 
+          video_urls: extractUrls(video.lzzy_video_urls)
         }) 
-                          
-      //   path: '/play',
-        // query: {
-        //   id: video.vod_id,
-        //   title: video.title, 
-        //   video_urls: video.video_urls
-        // }
-      // })  
+                           
     }
 
     const handleVodTypeClick = (type: string,id:any) => {
@@ -217,7 +218,9 @@ export default defineComponent({
     }
 
 
-    onMounted(() => {
+
+
+    onMounted(() => { 
       getVodTypes()
       fetchVideos()
     })

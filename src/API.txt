@@ -1,0 +1,8 @@
+
+https://cj.lziapi.com/api.php/provide/vod/?ac=list&videolist&t=&pg=1&h=&ids=&wd=&ct=1
+https://cj.lziapi.com/api.php/provide/vod/?ac=detail&videolist=&t=&pg=1&h=&ids=&wd=&ct=1
+--------------------------------------------------------------------------------------------------------------
+
+https://cj.lziapi.com/api.php/provide/vod/?ac=list&pg=1&ct=1
+
+https://cj.lziapi.com/api.php/provide/vod/?ac=detail&pg=1&ct=1

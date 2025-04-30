@@ -1,6 +1,6 @@
 use std::fs;
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 const CONFIG_FILE: &str = "db_path_config.json";
 
