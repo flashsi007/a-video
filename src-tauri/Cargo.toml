@@ -32,4 +32,5 @@ rand = "0.8"
 scraper = "0.17"
 regex = "1.10"
 rusqlite = { version = "0.31", features = ["bundled"] }
+tauri-plugin-devtools = "2.0.0"
 

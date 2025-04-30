@@ -1,22 +1,25 @@
-use std::fs;
-use serde::Deserialize;
 use crate::crawler::package::config::API_CLASS_URL;
+  
+ 
+use crate::structs::structs::CrawlParams; 
+ 
 
-#[derive(Deserialize)]
-struct VodType {
-    id: u32,
-}
+pub fn build_type_urls(params:CrawlParams) -> Result<Vec<String>, Box<dyn std::error::Error>> { 
 
-pub fn build_type_urls(json_path: &str) -> Result<Vec<String>, Box<dyn std::error::Error>> {
+   // 创建一个 Vec 包含 params
+   let params_vec = vec![params];
     
-    let data = fs::read_to_string(json_path)?;
-    
-    
-    let types: Vec<VodType> = serde_json::from_str(&data)?;
+   // 将 Vector 转换为 JSON 字符串
+   let json_string = serde_json::to_string(&params_vec)?;
+   let types: Vec<CrawlParams> = serde_json::from_str(&json_string)?;
+   
+ 
     let urls = types
         .into_iter()
         .map(|vod| format!("{}{}{}", API_CLASS_URL, vod.id, "/1.html"))
         .collect();
+  
+      
     Ok(urls)
 }
 

@@ -1,36 +1,4 @@
-<script setup lang="ts">
-import { ref } from "vue"
-import { invoke } from "@tauri-apps/api/core"
-import { RouterView } from 'vue-router'
-import { Window } from "@tauri-apps/api/window"
-// @ts-ignore
-import { Webview  } from "@tauri-apps/api/webview"
-const appWindow = Window.getCurrent();
-const greetMsg = ref("")
-const name = ref("")
-// @ts-ignore
-async function greet() {
-  greetMsg.value = await invoke("greet", { name: name.value })
-}
 
- 
-
-// 窗口控制方法
-async function minimizeWindow() {
-  await appWindow.minimize()
-}
-async function toggleMaximizeWindow() {
-  const isMax = await appWindow.isMaximized()
-  if (isMax) {
-    await appWindow.unmaximize()
-  } else {
-    await appWindow.maximize()
-  }
-}
-async function closeWindow() {
-  await appWindow.close()
-}
-</script>
 
 <template>
   <!-- -->
@@ -64,38 +32,84 @@ async function closeWindow() {
                  shadow-card flex  z-50 
                  border-b justify-center space-x-4" 
     style="margin-top:2rem;background:rgba(30,32,38,0.95); border-bottom:1px solid #23272f;">
-      <router-link  to="/"    class="flex justify-center items-center" >
+      <div    class="flex justify-center items-center cursor-pointer"  @click="currentComponent = HomePage" >
           <VideoCamera class="text-primary mr-2" style="width: 1.5rem; height:1.5rem;" />
           <span class="font-semibold text-lg tracking-wide">影视资源库</span>
-      </router-link>
+      </div>
      
-     
+      <div    class="flex justify-center items-center cursor-pointer"  @click="currentComponent = PlayPage" >
+          <VideoCamera class="text-primary mr-2" style="width: 1.5rem; height:1.5rem;" />
+          <span class="font-semibold text-lg tracking-wide">播放</span>
+      </div>
 
-      <router-link   to="/collect"  class="flex justify-center items-center"   >
+
+      <div     class="flex justify-center items-center cursor-pointer"   @click="currentComponent = CollectPage">
         <Film class="text-primary mr-2" style="width: 1.5rem; height:1.5rem;" />
         <span class="font-semibold text-lg tracking-wide">片源更新</span> 
-      </router-link>
+      </div>
 
 
-      <router-link  to="/mypages"  class="flex justify-center items-center" >
+      <div  class="flex justify-center items-center cursor-pointer " @click="currentComponent = MyPages">
         <Setting class="text-primary mr-2" style="width: 1.5rem; height:1.5rem;" />
         <span class="font-semibold text-lg tracking-wide">设置</span>
-      </router-link>
+      </div>
 
     </nav>
      
    
-    <!-- 内容区域 -->
+    <!-- 内容区域 --> 
     <main class="pt-28 p-8 max-w-7xl mx-auto">
-      <RouterView />
+      <component :is="currentComponent" @send-data="handleSendData" />
     </main>
   </div>
 </template>
-<script lang="ts">
-// @ts-ignore  
-import {  VideoCamera, Film,Setting } from '@element-plus/icons-vue' 
+ 
+
+<script setup lang="ts">  
+import {VideoItem} from "./types"
+import { ref } from 'vue' 
+import HomePage from '@/pages/HomePage.vue';
+import CollectPage from '@/pages/CollectPage.vue';
+import PlayPage from '@/pages/PlayPage.vue';
+import MyPages from '@/pages/MyPages.vue'; 
+import { useVideoStore } from './stores/videoStore' 
+
+const videoStore = useVideoStore() 
+const currentComponent = ref(HomePage);
+
+const handleSendData = (data:VideoItem) => {
+  currentComponent.value = PlayPage; 
+    // 存入 Pinia
+    videoStore.setSelectedVideo({ id: data.id, title: data.title, video_urls: data.video_urls   })
+};
+
+
+
+import { Window } from "@tauri-apps/api/window"
+// @ts-ignore
+import { Webview  } from "@tauri-apps/api/webview"
+const appWindow = Window.getCurrent();
+
+ 
+
+// 窗口控制方法
+async function minimizeWindow() {
+  await appWindow.minimize()
+}
+async function toggleMaximizeWindow() {
+  const isMax = await appWindow.isMaximized()
+  if (isMax) {
+    await appWindow.unmaximize()
+  } else {
+    await appWindow.maximize()
+  }
+}
+async function closeWindow() {
+  await appWindow.close()
+}
+
 </script>
-<style>
+<style scoped>
 .tauri-titlebar {
   /* opacity: 0; */
   pointer-events: auto;

@@ -10,6 +10,9 @@ use tauri::Window;
 
 use crate::db::sqlite::DB_INSTANCE as db;
 
+use crate::structs::structs::CrawlParams;
+
+
 /// 提取 URL 中的数字部分
 fn extract_id_from_url(url: &str) -> Option<String> {
     // 定义正则表达式，匹配路径中的数字部分
@@ -61,26 +64,12 @@ fn extract_links(html_str: &str, selector: &str) -> Option<Vec<String>> {
     html_parser::extract_all_links(html_str, selector)
 }
 
-// fn print_video_info(vod_id: &str, title: &str, img_url: &str, type_name: &str, year: &str, area: &str, language: &str, description: &str, director: &str, actor: &str, video_url: &Vec<String>) {
-//     println!("{}", vod_id);
-//     println!("{}", title);
-//     println!("封面图 {}", img_url);
-//     println!("{}", type_name);
-//     println!("{}", year);
-//     println!("{}", area);
-//     println!("{}", language);
-//     println!("{}", description);
-//     println!("{}", director);
-//     println!("{}", actor);
-//     println!("{:?} \n", video_url);
-// }
-
-
- 
-pub async fn run(window: Window) -> Result<String, String> {
+  
+pub async fn run(window: Window,params:CrawlParams) -> Result<String, String> {
     let progress = std::sync::Arc::new(tokio::sync::Mutex::new((0usize, 0)));
+ 
 
-    let urls = url_utils::build_type_urls("src/crawler/vod_type.json").map_err(|e| e.to_string())?;
+    let urls = url_utils::build_type_urls(params).map_err(|e| e.to_string())?;
    
       
     // 用于存储所有子任务的handle
@@ -96,6 +85,8 @@ pub async fn run(window: Window) -> Result<String, String> {
                 return Ok("".to_string());
             }
         };
+
+        
 
         let html = fetch::fetch(&url, "html", None).await.map_err(|e| e.to_string())?;
     
@@ -124,7 +115,7 @@ pub async fn run(window: Window) -> Result<String, String> {
         };
 
         
-
+         
         let url_clone = url.clone();
         let window_clone = window.clone();
         let progress_clone = progress.clone();
@@ -182,7 +173,7 @@ async fn process_paged_urls_with_progress(base_url: &str, vod_type_id: &str,tota
 
     // 外层循环：依次处理每个分页 URL
     for paged_url in paged_urls.iter() { 
-    
+        tokio::time::sleep(tokio::time::Duration::from_millis(3)).await;
         // 获取当前页面 HTML 内容
         let html = fetch::fetch(paged_url, "html", None).await.map_err(|e| e.to_string())?;
         let html_str = match html.as_str() {
@@ -197,6 +188,7 @@ async fn process_paged_urls_with_progress(base_url: &str, vod_type_id: &str,tota
         // 内层循环：依次处理每个视频链接
         for urls in url_list.iter() { 
             for url  in  urls{
+                tokio::time::sleep(tokio::time::Duration::from_millis(3)).await;
                 let base_url = format!("{}{}",API_BASE_URL,url);
                 println!(" 开始处理URL: {}", base_url);
                 // 调用处理函数，并等待其完成 
@@ -210,11 +202,9 @@ async fn process_paged_urls_with_progress(base_url: &str, vod_type_id: &str,tota
 }
 
 async fn process_video_page_with_progress( url: &str,vod_type_id: &str,  window: Window,  progress: std::sync::Arc<tokio::sync::Mutex<(usize, usize)>>, progress_total: usize) -> Result<(), Box<dyn std::error::Error>> {
-
    // 进度统计与事件推送
    let mut guard = progress.lock().await;
-    
-
+    tokio::time::sleep(tokio::time::Duration::from_millis(3)).await;
     let html = fetch::fetch(url, "html", None).await.map_err(|e| e.to_string())?;
     let html_str = match html.as_str() {
         Some(s) => s,

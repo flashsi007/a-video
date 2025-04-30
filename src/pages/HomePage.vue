@@ -68,19 +68,19 @@ import { defineComponent, ref, onMounted } from 'vue'
 // @ts-ignore
 import { VideoCamera, Setting, Film } from '@element-plus/icons-vue'
 // @ts-ignore
-import { invoke } from '@tauri-apps/api/core'
-import { useRouter } from 'vue-router'
+import { invoke } from '@tauri-apps/api/core'   
 
-
-
+ 
 
 export default defineComponent({
-  name: 'HomePage',
+  name: 'Home',
   components: {
     VideoCamera,
     Film
-  },
-  setup() {
+  }, 
+  emits: ['sendData'],  
+  // @ts-ignore
+  setup(props, { emit } ) {
     const videos = ref<Array<any>>([])
     const loading = ref(false)
     const currentPage = ref(1)
@@ -95,8 +95,7 @@ export default defineComponent({
     ])
     const vodTypesItem = ref('')
     const vodTypesItemId = ref(null)
-    const router = useRouter()
-    
+      
     const fetchVideos = async () => {
       loading.value = true
       try {
@@ -178,17 +177,20 @@ export default defineComponent({
           return str
         })
  
-        
- 
-      
-      router.push({
-        path: '/pla',
-        query: {
+         // 发布 
+        emit('sendData', {
           id: video.vod_id,
-          title: video.title, 
-          video_urls: video.video_urls
-        }
-      })  
+          title: video.title,
+          video_urls: video_urls 
+        }) 
+                          
+      //   path: '/play',
+        // query: {
+        //   id: video.vod_id,
+        //   title: video.title, 
+        //   video_urls: video.video_urls
+        // }
+      // })  
     }
 
     const handleVodTypeClick = (type: string,id:any) => {
@@ -228,7 +230,7 @@ export default defineComponent({
       searchKeyword,
       vodTypes,
       vodTypesItemId,
-      handleVodItem,
+      handleVodItem, 
       handleVodTypeClick,
       currentChange,
       onPageChange,
@@ -238,7 +240,7 @@ export default defineComponent({
   }
 })
 </script>
-<style>
+<style scoped>
 .vodTypeItem:hover {
   color: #FF4c4c;
 }
