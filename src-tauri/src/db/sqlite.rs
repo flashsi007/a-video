@@ -174,11 +174,8 @@ pub static DB_INSTANCE: Lazy<SqliteDB> = Lazy::new(|| {
     
     let path = get_db_path();
 
-    println!("数据库路径: {:?}", path);
-   
-    // D:\\a-video\\video.db"
-    // C:\\Users\\Administrator\\Desktop\\bas\\video.db"
-    let db = SqliteDB::new("C:\\Users\\Administrator\\Desktop\\bas\\video.db")
+    println!("数据库路径: {:?}", path); 
+    let db = SqliteDB::new(path.unwrap())
         .expect("数据库初始化失败");
     // 初始化表结构
     db.init_tables().expect("表初始化失败");
