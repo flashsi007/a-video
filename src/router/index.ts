@@ -19,7 +19,7 @@ let routes = [
     component: import('../pages/CollectPage.vue')
   },
   {
-    path: '/pla',
+    path: '/play',
     name: 'PlayPage',
     component: import('../pages/PlayPage.vue')
   }

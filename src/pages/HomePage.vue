@@ -85,6 +85,9 @@ import { invoke } from '@tauri-apps/api/core'
 // @ts-ignore
 import { open } from '@tauri-apps/plugin-dialog';
  
+import {useRouter} from "vue-router"
+
+
 function extractUrls(str:string): Array<string> {
     // 使用正则表达式匹配以 .m3u8 结尾的 URL
     const urlRegex = /https?:\/\/[\w\-_]+(\.[\w\-_]+)+(?:[\w\-\.,@?^=%&:/~\+#]*[\w\-\@?^=%&/~\+#])?\.m3u8/g;
@@ -105,9 +108,10 @@ export default defineComponent({
     VideoCamera,
     Film
   }, 
-  emits: ['sendData'],  
+  // emits: ['sendData'],   props, { emit }
   // @ts-ignore
-  setup(props, { emit } ) {
+  setup( ) {
+    const router = useRouter();
     const videos = ref<Array<any>>([])
     const loading = ref(false)
     const currentPage = ref(1)
@@ -192,12 +196,21 @@ export default defineComponent({
 
     const handleVodItem = (video: any) => { 
    
-         // 发布 
-        emit('sendData', {
+     let video_urls = extractUrls(video.lzzy_video_urls) as string[]
+      router.push({
+        path: '/play',
+        query: {
           id: video.vod_id,
           title: video.title,
-          video_urls: extractUrls(video.lzzy_video_urls)
-        }) 
+          video_urls
+        }
+      })
+         // 发布 
+        // emit('sendData', {
+        //   id: video.vod_id,
+        //   title: video.title,
+        //   video_urls: extractUrls(video.lzzy_video_urls)
+        // }) 
                            
     }
 

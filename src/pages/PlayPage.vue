@@ -33,29 +33,19 @@
           </h2>
           <el-form class="space-y-8"> 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <el-form-item label="片头时间(秒)" class="block">
-                <div class="flex items-center justify-between mb-1">
-                  <span class="text-gray-400 text-sm">跳过片头</span>
+              <el-form-item  class="block">
+                <div class="  mb-1">
+                  <span class="text-gray-400 text-sm mr-1">跳过片头</span>
                   <span class="text-primary font-medium">{{introTime}}秒</span>
                 </div>
-                <el-slider
-                  v-model="introTime"
-                  :max="300"
-                  show-input
-                  class="custom-slider"
-                />
+                <el-slider v-model="introTime" :max="300"  class="custom-slider"  />
               </el-form-item>
-              <el-form-item label="片尾时间(秒)" class="block">
-                <div class="flex items-center justify-between mb-1">
-                  <span class="text-gray-400 text-sm">跳过片尾</span>
+              <el-form-item   class="block">
+                <div class=" mb-1">
+                  <span class="text-gray-400 text-sm mr-1">跳过片尾</span>
                   <span class="text-primary font-medium">{{outroTime}}秒</span>
                 </div>
-                <el-slider
-                  v-model="outroTime"
-                  :max="300"
-                  show-input
-                  class="custom-slider"
-                />
+                <el-slider  v-model="outroTime"  :max="300"   class="custom-slider"   />
               </el-form-item>
             </div>
           </el-form>
@@ -164,16 +154,10 @@
     </div>
   </template>
   
-  <script lang="ts">
-import {VideoItem} from "../types"
- import { useVideoStore } from '../stores/videoStore'
-
-
-
+  <script lang="ts"> 
+   import {useRoute} from "vue-router" 
   import { defineComponent, ref, onMounted,watchEffect } from 'vue'
-  import { ElInput, ElSlider, ElForm, ElFormItem } from 'element-plus'
-  // @ts-ignore
-  import { VideoCamera, Setting, Film } from '@element-plus/icons-vue'
+  import { ElInput, ElSlider, ElForm, ElFormItem } from 'element-plus'  
   import VideoPlayer from '@/components/VideoPlayer.vue'  
   export default defineComponent({
     name: 'PlayPage',
@@ -185,15 +169,11 @@ import {VideoItem} from "../types"
       ElFormItem
     },
     setup() {
-     const videoStore = useVideoStore()
-   
-      // const router = useRoute() 
-     const {title,video_urls} = videoStore.selectedVideo as VideoItem
-     
-     
+       const route = useRoute();
+       let {title,video_urls} =  route.query 
 
-      // 从localStorage读取缓存
-      const loadCache = (key: string, defaultValue: any) => {
+       // 从localStorage读取缓存
+       const loadCache = (key: string, defaultValue: any) => {
         try {
           const cached = localStorage.getItem(key)
           return cached ? JSON.parse(cached) : defaultValue
@@ -202,39 +182,41 @@ import {VideoItem} from "../types"
         }
       }
 
+ 
+     
+     
+
       const videoTitle = ref(loadCache('videoTitle', title))
       const videoPlayer = ref<typeof VideoPlayer>()
-      const videoUrls = ref(loadCache('videoUrls', ``))
-  
+      const play_source = ref<Array<string> >(loadCache('play_source', video_urls)) 
       const introTime = ref(loadCache('introTime', 0))
       const outroTime = ref(loadCache('outroTime', 0))
       const currentVideoIndex = ref(loadCache('currentVideoIndex', 0))
       const videoIndex = ref(loadCache('videoIndex', 0))
       const videos = ref<Array<{url: string, intro: number, outro: number}>>([])
+     
   
-      onMounted(() => { 
-        
-      videoUrls.value =  video_urls  
-      videoTitle.value = title
-        localStorage.setItem('videoUrls', JSON.stringify(videoUrls.value))
+      
+      onMounted(() => {  
+        play_source.value = loadCache('play_source', video_urls)  as Array<string>
+       videoTitle.value = title
+        localStorage.setItem('play_source', JSON.stringify(play_source.value))
         localStorage.setItem('videoTitle', JSON.stringify(videoTitle.value))
-       updateVideos()
+         updateVideos()
+         
       })
 
 
       const updateVideos = () => {
-        const newVideos = videoUrls.value 
-          // .split('\n')
-          // .filter((url: string) => url.trim())
-          .map((url: string) => ({
+       
+        
+        const newVideos = play_source.value.map((url: string) => ({
             url: url.trim(),
             intro: introTime.value,
             outro: outroTime.value
           }))
         
-        videos.value = newVideos
-  
-  
+        videos.value = newVideos 
         videoPlayer.value?.updateVideos(newVideos)
       }
   
@@ -247,7 +229,7 @@ import {VideoItem} from "../types"
   
       // 监听数据变化并更新缓存
       watchEffect(() => {
-        localStorage.setItem('videoUrls', JSON.stringify(videoUrls.value))
+        localStorage.setItem('play_source', JSON.stringify(play_source.value))
         localStorage.setItem('introTime', JSON.stringify(introTime.value))
         localStorage.setItem('outroTime', JSON.stringify(outroTime.value))
         localStorage.setItem('videoTitle', JSON.stringify(videoTitle.value))
@@ -264,7 +246,7 @@ import {VideoItem} from "../types"
   
   
       return {
-        videoUrls,
+        play_source,
         introTime,
         outroTime,
         currentVideoIndex,
@@ -279,5 +261,17 @@ import {VideoItem} from "../types"
     }
   })
   </script>
+
+  <style>
+   .el-slider__bar{
+     background-color: #FF4C4C;
+   }
+
+   .el-slider__button{
+    border: #FF4C4C solid 1px;  
+   }
+ </style>
+
+ 
   
  

@@ -32,24 +32,24 @@
                  shadow-card flex  z-50  py-2
                  border-b justify-center space-x-4" 
     style="margin-top:2rem;background:rgba(30,32,38,0.95); border-bottom:1px solid #23272f;">
-      <div    class="flex justify-center items-center cursor-pointer"  @click="currentComponent = HomePage" >
+      <div    class="flex justify-center items-center cursor-pointer"  @click="toPage('/')" >
           <VideoCamera class="text-primary mr-2" style="width: 1.5rem; height:1.5rem;" />
           <span class="font-semibold text-lg tracking-wide">影视资源库</span>
       </div>
      
-      <div    class="flex justify-center items-center cursor-pointer"  @click="currentComponent = PlayPage" >
+      <div    class="flex justify-center items-center cursor-pointer"  @click="toPage('/play')" >
           <VideoCamera class="text-primary mr-2" style="width: 1.5rem; height:1.5rem;" />
           <span class="font-semibold text-lg tracking-wide">播放</span>
       </div>
 
 
-      <div     class="flex justify-center items-center cursor-pointer"   @click="currentComponent = CollectPage">
+      <div     class="flex justify-center items-center cursor-pointer"   @click="toPage('/collect')">
         <Film class="text-primary mr-2" style="width: 1.5rem; height:1.5rem;" />
         <span class="font-semibold text-lg tracking-wide">片源更新</span> 
       </div>
 
 
-      <div  class="flex justify-center items-center cursor-pointer " @click="currentComponent = MyPages">
+      <div  class="flex justify-center items-center cursor-pointer " @click="toPage('/mypages')">
         <Setting class="text-primary mr-2" style="width: 1.5rem; height:1.5rem;" />
         <span class="font-semibold text-lg tracking-wide">设置</span>
       </div>
@@ -59,29 +59,34 @@
    
     <!-- 内容区域 --> 
     <main class="pt-28 p-8 max-w-7xl mx-auto">
-      <component :is="currentComponent" @send-data="handleSendData" />
+      <!-- <component :is="currentComponent" @send-data="handleSendData" />
+        -->
+        <RouterView />
     </main>
   </div>
 </template>
  
 
 <script setup lang="ts">  
-import {VideoItem} from "./types"
-import { ref ,onMounted} from 'vue' 
-import HomePage from '@/pages/HomePage.vue';
-import CollectPage from '@/pages/CollectPage.vue';
-import PlayPage from '@/pages/PlayPage.vue';
-import MyPages from '@/pages/MyPages.vue'; 
-import { useVideoStore } from './stores/videoStore'  
+import {useRouter} from "vue-router"
+// import { ref ,onMounted} from 'vue' 
+// import {VideoItem} from "./types"
+// import HomePage from '@/pages/HomePage.vue';
+// import CollectPage from '@/pages/CollectPage.vue';
+// import PlayPage from '@/pages/PlayPage.vue';
+// import MyPages from '@/pages/MyPages.vue'; 
+// import { useVideoStore } from './stores/videoStore'   
 
-const videoStore = useVideoStore() 
-const currentComponent = ref(HomePage);
+// const videoStore = useVideoStore() 
+// const currentComponent = ref(HomePage);
 
-const handleSendData = (data:VideoItem) => {
-  currentComponent.value = PlayPage; 
-    // 存入 Pinia
-    videoStore.setSelectedVideo({ id: data.id, title: data.title, video_urls: data.video_urls   })
-};
+const router = useRouter();
+
+const toPage = (path:string) => {
+  router.push(path)
+}
+
+ 
 
 
 
@@ -106,11 +111,10 @@ async function closeWindow() {
   await appWindow.close()
 }
  
-onMounted(() => {
-  // initDBPath ()
+// onMounted(() => { 
   
  
-})
+// })
 
 </script>
 <style scoped>
