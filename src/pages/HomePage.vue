@@ -33,6 +33,12 @@
               <el-button type="primary" size="small" @click="onSearch"
                 class="rounded-lg px-5 py-2 font-medium shadow-card bg-primary hover:bg-primary/80 border-none">搜索</el-button>
             </div>
+            <!-- 回到顶部按钮 -->
+            <transition name="fade">
+              <button v-if="showBackToTop" @click="scrollToTop" class="fixed bottom-10 right-10 z-50 bg-primary text-white rounded-full shadow-lg p-3 hover:bg-primary/80 transition-all duration-300">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" /></svg>
+              </button>
+            </transition>
           </div>
 
           <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-5 gap-6">
@@ -221,10 +227,24 @@ export default defineComponent({
 
 
 
-    onMounted(() => { 
+    const showBackToTop = ref(false)
+    const handleScroll = () => {
+      showBackToTop.value = window.scrollY > 300
+    }
+    const scrollToTop = () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+    onMounted(() => {
+      window.addEventListener('scroll', handleScroll)
       getVodTypes()
       fetchVideos()
     })
+    // 页面卸载时移除监听
+    if (typeof window !== 'undefined') {
+      window.addEventListener('beforeunload', () => {
+        window.removeEventListener('scroll', handleScroll)
+      })
+    }
     return {
       videos,
       loading,
@@ -239,7 +259,9 @@ export default defineComponent({
       currentChange,
       onPageChange,
       getVodTypes,
-      onSearch
+      onSearch,
+      showBackToTop,
+      scrollToTop
     }
   }
 })
@@ -248,4 +270,6 @@ export default defineComponent({
 .vodTypeItem:hover {
   color: #FF4c4c;
 }
+.fade-enter-active, .fade-leave-active { transition: opacity 0.3s; }
+.fade-enter-from, .fade-leave-to { opacity: 0; }
 </style>

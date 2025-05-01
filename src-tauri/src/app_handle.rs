@@ -2,7 +2,7 @@
 
 use once_cell::sync::OnceCell;
 use std::sync::Mutex;
-use tauri::{AppHandle, Manager};
+use tauri::AppHandle;
 
 static APP_HANDLE: OnceCell<Mutex<AppHandle>> = OnceCell::new();
 // static  APP_HANDLE_DIR: OnceCell<Mutex<std::path::PathBuf>> = OnceCell::new();

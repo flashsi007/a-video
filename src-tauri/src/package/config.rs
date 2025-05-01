@@ -1,6 +1,4 @@
-pub const API_BASE_URL: &str = "http://ffzy.tv";
 
-pub const API_CLASS_URL: &str = "http://ffzy.tv/index.php/vod/type/id/";
 
 pub const USER_AGENTS: &[&str] = &[
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",

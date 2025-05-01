@@ -7,6 +7,15 @@ pub enum CollectType {
     所有采集 = 2, // 所有采集
 }
 
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Progress {
+    pub percent: f32,
+    pub current: i32,
+    pub total: i32,
+    pub message: String,
+}
+
 #[derive(Deserialize, Serialize)]
 pub struct CrawlParams {
     pub id: u32,

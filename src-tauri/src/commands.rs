@@ -1,8 +1,9 @@
-use crate::crawler::package::fetch::fetch;
+
+use crate::package::fetch::fetch;
 use crate::db::modes::VideoInfo;
 use crate::db::sqlite::DB_INSTANCE as db;
 use crate::structs::structs::CollectType;
-use crate::structs::structs::ResponseLzzyVod;
+use crate::structs::structs::{ResponseLzzyVod,Progress};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;  
 use std::sync::Arc;
@@ -10,13 +11,10 @@ use tauri::Emitter;
 use tauri::Manager;
 use tokio::sync::Mutex;
 use crate::utils::utils::get_current_date;
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Progress {
-    pub percent: f32,
-    pub current: i32,
-    pub total: i32,
-    pub message: String,
-}
+use crate::utils::resource_utils::get_resource_path;
+use crate::app_handle::get_app_handle;
+use std::fs;
+
 
 fn calculate_total_pages(total: i32, limit: i32) -> i32 {
     if limit == 0 {
@@ -125,6 +123,9 @@ pub async fn get_lzzy_vod_detail(collect_type: CollectType) {
 
         let mut processed_count = 0;
 
+        // 控制进度事件发送频率
+        let emit_interval = 50; // 每处理50个视频发送一次进度
+
         for (page_index, url) in urls.iter().enumerate() {
             let json_data: Value = match fetch(url, "json", None).await {
                 Ok(result) => result,
@@ -142,6 +143,7 @@ pub async fn get_lzzy_vod_detail(collect_type: CollectType) {
                 }
             };
             let date =  get_current_date();
+            // 顺序插入，避免高并发
             for vod in response.list {
                 let video_info = VideoInfo {
                     id: None,
@@ -162,24 +164,18 @@ pub async fn get_lzzy_vod_detail(collect_type: CollectType) {
                     updated_at: date.clone(),
                 };
 
-                let video_info_clone = video_info.clone();
-                tokio::spawn(async move {
-                    lzzy_insert_video_info(video_info_clone).await;
-                });
+                // 顺序执行数据库操作，避免spawn导致锁冲突
+                lzzy_insert_video_info(video_info).await;
 
                 // 更新进度信息
                 processed_count += 1;
-                {
+                if processed_count % emit_interval == 0 || (page_index == urls.len() - 1 && processed_count == total) {
                     let mut guard = progress.lock().await;
                     guard.current = processed_count;
                     guard.percent = (processed_count as f32 / total as f32) * 100.0;
                     guard.message = "正在采集...".to_string();
-
-                    // 每处理10个视频或者是最后一页时发送进度信息
-                    if processed_count % 10 == 0 || (page_index == urls.len() - 1) {
-                        if let Some(window) = app_handle.get_webview_window("main") {
-                            let _ = window.emit("ffzy_progress", guard.clone());
-                        }
+                    if let Some(window) = app_handle.get_webview_window("main") {
+                        let _ = window.emit("ffzy_progress", guard.clone());
                     }
                 }
             }
@@ -203,4 +199,11 @@ pub async fn get_lzzy_vod_detail(collect_type: CollectType) {
 pub fn  set_db_path (db_path:&str)-> String {
     println!("Database path set to: {}", db_path);
     format!("{}", db_path)
+}
+
+#[tauri::command]
+pub fn get_vod_types() -> Result<String, String> {
+    let app_handle = get_app_handle().lock().unwrap();
+    let resource_path = get_resource_path(&app_handle, "resources/crawler/vod_type.json").unwrap();
+    fs::read_to_string(&resource_path).map_err(|e| format!("读取vod_type.json失败: {}", e))
 }

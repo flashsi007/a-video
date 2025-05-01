@@ -1,26 +1,23 @@
-mod crawler;
+mod package;
 mod db; 
-use std::fs;
+
 
 mod commands;
-use crate::commands::{get_lzzy_vod_detail,set_db_path};
+use crate::commands::{get_lzzy_vod_detail,set_db_path,get_vod_types};
 
 mod services;
 use crate::services::vod_service;
 
 mod utils;
-use crate::utils::resource_utils::get_resource_path;
+
 
 mod app_handle;
-use crate::app_handle::get_app_handle;
+
 
 mod structs;
 use crate::structs::structs::CollectType;
 
-#[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
+ 
 
 #[tauri::command]
 async fn crawl_ffzy(status: i32) -> Result<String, String> {
@@ -37,12 +34,7 @@ async fn crawl_ffzy(status: i32) -> Result<String, String> {
     Ok("success".to_string())
 }
 
-#[tauri::command]
-fn get_vod_types() -> Result<String, String> {
-    let app_handle = get_app_handle().lock().unwrap();
-    let resource_path = get_resource_path(&app_handle, "resources/crawler/vod_type.json").unwrap();
-    fs::read_to_string(&resource_path).map_err(|e| format!("读取vod_type.json失败: {}", e))
-}
+
 
 
 
@@ -53,8 +45,7 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![
-            greet,
+        .invoke_handler(tauri::generate_handler![ 
             crawl_ffzy,
             vod_service::query_videos,
             set_db_path,

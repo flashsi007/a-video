@@ -16,9 +16,9 @@
             <div class="flex-1 mx-5"> 
               <div>
                     <el-progress  
-                        class="custom-el-progress"
-                        text-inside
-                       :percentage="vodTypItem.progress.percent" 
+                        class="custom-el-progress" 
+                        :text-inside="true" 
+                       :percentage="calculateProgress(vodTypItem.progress.current, vodTypItem.progress.total)"
                        :stroke-width="18"  
                        color="#FF4c4c"  
                        :show-text="false"   
@@ -29,7 +29,7 @@
             <div class="w-32 mx-5">
               <button class="w-full  bg-primary text-white rounded-lg font-medium shadow-card hover:bg-primary/80 transition  disabled:opacity-60 disabled:cursor-not-allowed" 
                                 :disabled="vodTypItem.disabled" @click="startCollect(vodTypItem )" >
-                                  {{ vodTypItem.collecting ? (vodTypItem.progress.total+'/'+vodTypItem.progress.current) : '开始采集' }}
+                                  {{ vodTypItem.collecting ? (calculateProgress(vodTypItem.progress.current, vodTypItem.progress.total) + "%") : '开始采集' }}
                                 </button>
             </div>
 
@@ -62,6 +62,19 @@ interface vodType {
     total: number,
     message: string
   },
+}
+
+function calculateProgress(current:number, total:number) :number{
+   // 验证输入是否有效
+   if (current < 0 || total <= 0 || current > total) {
+        return 0;
+    }
+
+    // 计算百分比
+    let percent = Math.round((current / total) * 100);
+
+    // 返回百分比字符串
+    return percent ;
 }
 
 const loadCache = (key: string, defaultValue: any) => {
@@ -97,8 +110,10 @@ const startCollect = async (params:vodType ) => {
   
 
 onMounted(async () => {
+
   unlisten = await listen('ffzy_progress', (event) => {
-    const {current,message,percent,total} = event.payload as any
+    const {current,message,percent,total} = event.payload as any 
+    
      vodType.value = loadCache('vodType', JSON.stringify(vodType.value))
      vodTypes.value.forEach((item) => {
       item.disabled = true
@@ -162,6 +177,12 @@ onUnmounted(() => {
 }
 .rounded-2xl {
   border-radius: 1rem;
+}
+
+.custom-progress .el-progress-bar__innerText {
+  position: absolute;
+  right: 0;
+  margin-right: 10px;
 }
 </style>
 
