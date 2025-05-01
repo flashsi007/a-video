@@ -153,9 +153,9 @@
   
   <script lang="ts"> 
    import {useRoute} from "vue-router" 
-  import { defineComponent, ref, onMounted,watchEffect } from 'vue'
+  import { defineComponent, ref,  watchEffect } from 'vue'
   import { ElInput, ElSlider, ElForm, ElFormItem } from 'element-plus'  
-  import VideoPlayer from '@/components/VideoPlayer.vue'  
+  import VideoPlayer from '@/components/VideoPlayer.vue'   
   export default defineComponent({
     name: 'PlayPage',
     components: {
@@ -167,10 +167,8 @@
     },
     setup() {
        const route = useRoute();
-       let {title,video_urls} =  route.query 
-       if(typeof video_urls == "string"){
-        video_urls = []
-       }
+
+       
 
 
        // 从localStorage读取缓存
@@ -183,44 +181,56 @@
         }
       }
 
- 
-     
+      const videoPlayer = ref<typeof VideoPlayer>()  
+      const introTime = ref( 0)
+      const outroTime = ref(0)
+      const play_source = ref<Array<string> >([]) 
+      const videoTitle = ref<string>('') 
+      const currentVideoIndex = ref(0)
+      const videoIndex = ref(0)
+      const videos = ref<Array<{url: string, intro: number, outro: number}>>([])
+
+      let {title,video_urls} =  route.query  
+      if(video_urls){
+        if(typeof video_urls == "string") video_urls = []
+
+        play_source.value  = video_urls as Array<string>
+        videoTitle.value = title as string 
+
+        introTime.value = 0
+        outroTime.value = 0
+        currentVideoIndex.value = 0
+        videoIndex.value = 0
+
+        localStorage.setItem('introTime', '0')
+        localStorage.setItem('outroTime', '0')
+        localStorage.setItem('videoIndex', '0')
+        localStorage.setItem('currentVideoIndex', '0') 
+        localStorage.setItem('play_source', JSON.stringify(play_source.value))
+        localStorage.setItem('videoTitle', JSON.stringify(videoTitle.value))
+      }else{
+
+        introTime.value = loadCache('introTime', introTime.value)
+        outroTime.value = loadCache('outroTime', outroTime.value)
+        videoTitle.value = loadCache('videoTitle',videoTitle.value)
+        videoIndex.value = loadCache('videoIndex', videoIndex.value)
+        play_source.value = loadCache('play_source',  play_source.value)    
+        currentVideoIndex.value = loadCache('currentVideoIndex',  currentVideoIndex.value)
+      
+
+       // 初始化videos
+      // updateVideos()
+      }
      
 
-      const videoTitle = ref(loadCache('videoTitle', title))
-      const videoPlayer = ref<typeof VideoPlayer>()
-      const play_source = ref<Array<string> >(loadCache('play_source', video_urls)) 
-      const introTime = ref(loadCache('introTime', 0))
-      const outroTime = ref(loadCache('outroTime', 0))
-      const currentVideoIndex = ref(loadCache('currentVideoIndex', 0))
-      const videoIndex = ref(loadCache('videoIndex', 0))
-      const videos = ref<Array<{url: string, intro: number, outro: number}>>([])
+      
      
   
       
-      onMounted(() => {   
-       
-        
-        play_source.value = loadCache('play_source', video_urls)  as Array<string>
-
-          if( typeof play_source.value == 'string' ){
-            play_source.value  = []
-            localStorage.removeItem("play_source")
-          }
-
-          console.log(`onMounted ${JSON.stringify(play_source.value)} `);
-
-         videoTitle.value = title
-        localStorage.setItem('play_source', JSON.stringify(play_source.value))
-        localStorage.setItem('videoTitle', JSON.stringify(videoTitle.value))
-         updateVideos()
-         
-      })
+    
 
 
       const updateVideos = () => {
-       
-        
         const newVideos = play_source.value.map((url: string) => ({
             url: url.trim(),
             intro: introTime.value,
@@ -235,8 +245,7 @@
         currentVideoIndex.value = index
         videoIndex.value = index
       }
-      // 初始化videos
-      updateVideos()
+     
   
       // 监听数据变化并更新缓存
       watchEffect(() => {

@@ -53,13 +53,13 @@ pub fn run() {
             get_vod_types
         ])
         .setup(|app| {
-            // 生产环境下强制启用开发者工具
-            let window = app.get_webview_window("main").unwrap(); 
-            #[warn(debug_assertions)]
-            { 
-                let _ = window.open_devtools();
-                let _ = window.set_enabled(true); // 允许操作
-            }
+            // // 生产环境下强制启用开发者工具
+            // let window = app.get_webview_window("main").unwrap(); 
+            // #[cfg(debug_assertions)]
+            // {
+            //     let _ = window.open_devtools();
+            //     let _ = window.set_enabled(true); // 允许操作
+            // }
 
               
             // 初始化全局 AppHandle
