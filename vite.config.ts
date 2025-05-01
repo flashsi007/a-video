@@ -1,45 +1,29 @@
-/// <reference types="vitest" />
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+import { resolve } from 'path'
+const host = process.env.TAURI_DEV_HOST; 
+export default defineConfig(async () => ({
+  plugins: [vue()],
 
-import type { ConfigEnv, UserConfig } from 'vite';
-
-import { createViteBuild } from './build/vite/build';
-import { createViteCSS } from './build/vite/css';
-import { createViteEsbuild } from './build/vite/esbuild';
-import { createViteOptimizeDeps } from './build/vite/optimizeDeps';
-import { createVitePlugins } from './build/vite/plugin';
-import { createViteResolve } from './build/vite/resolve';
-import { createViteServer } from './build/vite/server';
-import { createVitestTest } from './build/vite/viteTestConfig';
-
-// https://vitejs.dev/config/
-export default (configEnv: ConfigEnv): UserConfig => {
-  const { mode, command } = configEnv;
-  // const root = process.cwd();
-
-  // const env = loadEnv(mode, root);
-
-  const isBuild = command === 'build';
-
-  return {
-    // 设为 false 可以避免 Vite 清屏而错过在终端中打印某些关键信息。命令行模式下请通过 --clearScreen false 设置。
-    clearScreen: false,
-    logLevel: 'info',
-    envPrefix: ['VITE_', 'TAURI_'],
-    // esbuild
-    esbuild: createViteEsbuild(isBuild),
-    // vitest配置
-     test: createVitestTest(),
-    // 解析配置
-    resolve: createViteResolve(mode, __dirname),
-    // 插件配置
-    plugins: createVitePlugins(isBuild, configEnv),
-    // 服务配置
-    server: createViteServer(),
-    // 打包配置
-    build: createViteBuild(),
-    // 依赖优化配置
-    optimizeDeps: createViteOptimizeDeps(),
-    // css预处理配置
-    css: createViteCSS(),
-  };
-};
+  // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
+  //
+  // 1. prevent vite from obscuring rust errors
+  clearScreen: false,
+  // 2. tauri expects a fixed port, fail if that port is not available
+  server: {
+    port: 5173,
+    strictPort: true,
+    host: host || false,
+    hmr: host
+      ? {
+          protocol: "ws",
+          host,
+          port: 5173,
+        }
+      : undefined,
+    watch: {
+      // 3. tell vite to ignore watching `src-tauri`
+      ignored: ["**/src-tauri/**"],
+    },
+  }
+}));
