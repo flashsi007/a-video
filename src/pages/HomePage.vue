@@ -123,10 +123,11 @@ export default defineComponent({
         let params: any = {
           page: currentPage.value,
           page_size: pageSize.value,
-          keyword: searchKeyword.value
+          keyword: searchKeyword.value || 
         }
 
         if (vodTypesItem.value) {
+          delete params.keyword
           params.type_name = (vodTypesItem.value).trim()
         }
 
