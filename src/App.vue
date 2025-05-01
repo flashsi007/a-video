@@ -58,9 +58,7 @@
      
    
     <!-- 内容区域 --> 
-    <main class="pt-28 p-8 max-w-7xl mx-auto">
-      <!-- <component :is="currentComponent" @send-data="handleSendData" />
-        -->
+    <main class="pt-28 p-8 max-w-7xl mx-auto"> 
         <RouterView />
     </main>
   </div>
@@ -68,18 +66,7 @@
  
 
 <script setup lang="ts">  
-import {useRouter} from "vue-router"
-// import { ref ,onMounted} from 'vue' 
-// import {VideoItem} from "./types"
-// import HomePage from '@/pages/HomePage.vue';
-// import CollectPage from '@/pages/CollectPage.vue';
-// import PlayPage from '@/pages/PlayPage.vue';
-// import MyPages from '@/pages/MyPages.vue'; 
-// import { useVideoStore } from './stores/videoStore'   
-
-// const videoStore = useVideoStore() 
-// const currentComponent = ref(HomePage);
-
+import {useRouter} from "vue-router" 
 const router = useRouter();
 
 const toPage = (path:string) => {

@@ -221,7 +221,7 @@
       }
   
       const updateVideoIndex = (index: number) => {
-        // currentVideoIndex.value = index
+        currentVideoIndex.value = index
         videoIndex.value = index
       }
       // 初始化videos

@@ -204,14 +204,7 @@ export default defineComponent({
           title: video.title,
           video_urls
         }
-      })
-         // 发布 
-        // emit('sendData', {
-        //   id: video.vod_id,
-        //   title: video.title,
-        //   video_urls: extractUrls(video.lzzy_video_urls)
-        // }) 
-                           
+      })       
     }
 
     const handleVodTypeClick = (type: string,id:any) => {
