@@ -168,6 +168,8 @@ export default defineComponent({
     const getVodTypes = async () => {
       try {
         let result: any = await invoke('get_vod_types')
+        if(result == "" || result == null || result == undefined) return
+
         result = JSON.parse(result)
 
 
