@@ -3,6 +3,8 @@ mod db;
 
 
 mod commands;
+use tauri::Manager;
+
 use crate::commands::{get_lzzy_vod_detail,set_db_path,get_vod_types};
 
 mod services;
@@ -16,7 +18,6 @@ mod app_handle;
 
 mod structs;
 use crate::structs::structs::CollectType;
-
  
 
 #[tauri::command]
@@ -52,11 +53,23 @@ pub fn run() {
             get_vod_types
         ])
         .setup(|app| {
+            // 生产环境下强制启用开发者工具
+            let window = app.get_webview_window("main").unwrap(); 
+            #[warn(debug_assertions)]
+            { 
+                let _ = window.open_devtools();
+                let _ = window.set_enabled(true); // 允许操作
+            }
+
+              
             // 初始化全局 AppHandle
             let handle = app.handle().clone();
             app_handle::set_app_handle(handle);
-            Ok(())
+            
+            Ok(()) 
         })
+        
+          
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

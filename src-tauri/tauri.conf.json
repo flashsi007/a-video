@@ -16,6 +16,7 @@
     "windows": [
       {
         "title": "a-video",
+        "devtools": true,
         "width": 782,
         "height": 517,
         "minWidth": 400,
@@ -28,8 +29,7 @@
         "visible": true,
         "x": 0,
         "y": 480,
-        "decorations": false,
-        "devtools": true,
+        "decorations": false, 
         "maximizable": true,
         "minimizable": true,
         "closable": true
@@ -38,7 +38,7 @@
     ],
     
     "security": {
-      "csp": "default-src 'self' data: filesystem: ws: http: https: 'unsafe-inline'"
+      "csp": "default-src 'self' data: filesystem: ws: http: https: blob 'unsafe-inline'; media-src 'self' blob:"
     }
   },
 

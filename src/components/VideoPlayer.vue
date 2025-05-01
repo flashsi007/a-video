@@ -65,20 +65,18 @@ export default defineComponent({
     },
     
     savePlaybackState(index: number, time: number) {
-      localStorage.setItem('videoPlaybackState', JSON.stringify({
-        index,
-        time
-      }))
+      localStorage.setItem('videoPlaybackState', JSON.stringify({  index,  time  }))
       // 通知父组件更新当前索引
       this.$emit('update:currentIndex', index)
     },
     
 
  initPlayer(videoObj: typeof this.videos[0], index: number, seekTime?: number) { 
-
+        
       if (this.player) {
         this.player.destroy()
       } 
+      console.log(`initPlayer url:${videoObj.url}`);
       
       this.player = new Player({
         id: 'mse',
@@ -187,7 +185,7 @@ export default defineComponent({
     }, 
     changeVideo(index: number) {
       try {   
-         
+        console.log(`changeVideo ${JSON.stringify(this.videos[index])} `);
          this.currentVideoIndex = index
          this.initPlayer(this.videos[index], index) 
 

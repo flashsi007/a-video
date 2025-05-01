@@ -79,10 +79,7 @@
               <div class="space-y-2">
                 <h3 class="font-medium text-gray-200 group-hover:text-primary truncate">
                   视频 {{ index + 1 }}
-                </h3>
-                <!-- <p class="text-xs text-gray-500 truncate">
-                  ID: {{ video.url.split('/')?.slice(-2, -1)[0] }}
-                </p> -->
+                </h3> 
                 <div class="pt-1">
                   <span 
                     v-if="videoIndex === index" 
@@ -171,6 +168,10 @@
     setup() {
        const route = useRoute();
        let {title,video_urls} =  route.query 
+       if(typeof video_urls == "string"){
+        video_urls = []
+       }
+
 
        // 从localStorage读取缓存
        const loadCache = (key: string, defaultValue: any) => {
@@ -197,9 +198,19 @@
      
   
       
-      onMounted(() => {  
+      onMounted(() => {   
+       
+        
         play_source.value = loadCache('play_source', video_urls)  as Array<string>
-       videoTitle.value = title
+
+          if( typeof play_source.value == 'string' ){
+            play_source.value  = []
+            localStorage.removeItem("play_source")
+          }
+
+          console.log(`onMounted ${JSON.stringify(play_source.value)} `);
+
+         videoTitle.value = title
         localStorage.setItem('play_source', JSON.stringify(play_source.value))
         localStorage.setItem('videoTitle', JSON.stringify(videoTitle.value))
          updateVideos()

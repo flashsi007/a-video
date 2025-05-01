@@ -34,3 +34,18 @@ try {
 } catch (error) {
   console.error('Initialization failed:', error)
 }
+
+
+// 前端入口文件（如 main.js）
+// document.addEventListener("keydown", (e) => {
+//   const isDevToolsKey = e.key === "F12" || 
+//     (e.ctrlKey && e.shiftKey && e.key === "I") || 
+//     (e.metaKey && e.altKey && e.key === "I");
+
+//   if (isDevToolsKey) {
+//     e.preventDefault();
+//     e.stopPropagation();
+//     alert("开发者工具已禁用");
+//   }
+// });
+

@@ -4,7 +4,7 @@ use crate::db::modes::VideoInfo;
 use crate::db::sqlite::DB_INSTANCE as db;
 use crate::structs::structs::CollectType;
 use crate::structs::structs::{ResponseLzzyVod,Progress};
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 use serde_json::Value;  
 use std::sync::Arc;
 use tauri::Emitter;
