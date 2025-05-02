@@ -136,14 +136,20 @@ impl SqliteDB {
     Ok(())
     }
 
-    pub async fn update_video_lzzy_video_urls(
-        &self,
-        vod_id: &str,
-        lzzy_video_urls: &str,
-    ) -> Result<()> {
-        let sql = "UPDATE video_info SET lzzy_video_urls =?1 WHERE vod_id =?2";
+    pub async fn update_video_lzzy_video_urls( &self, img_url: &str,  vod_id: &str,   lzzy_video_urls: &str,  ) -> Result<()> {
+        //   返回当前日期时间的字符串
+        let updated_at = get_current_date(); 
+       let sql = "UPDATE video_info SET img_url = ?1, lzzy_video_urls = ?2, updated_at = ?3 WHERE vod_id = ?4";
 
-        self.execute(sql, &[&lzzy_video_urls as &dyn rusqlite::ToSql, &vod_id])?;
+    self.execute(
+        sql,
+        &[
+            &img_url as &dyn rusqlite::ToSql, 
+            &lzzy_video_urls as &dyn rusqlite::ToSql, 
+            &updated_at as &dyn rusqlite::ToSql, 
+            &vod_id as &dyn rusqlite::ToSql
+        ],
+    )?;
 
         Ok(())
     }

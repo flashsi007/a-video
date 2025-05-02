@@ -31,10 +31,8 @@ async fn lzzy_insert_video_info(video_info: VideoInfo) {
     match db.check_video_exists_by_vod_name(&video_info.title).await {
         Ok(exists) => {
             if exists {
-                if let Err(e) = db
-                    .update_video_lzzy_video_urls(&video_info.vod_id, &video_info.lzzy_video_urls)
-                    .await
-                {
+                if let Err(e) = db.update_video_lzzy_video_urls(  &video_info.img_url, &video_info.vod_id,  &video_info.lzzy_video_urls).await {
+
                     println!("更新视频信息失败: {}", e);
                 } else {
                     println!("更新视频信息成功: {}", video_info.vod_id);
