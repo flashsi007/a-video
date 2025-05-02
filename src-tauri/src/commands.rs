@@ -32,14 +32,21 @@ async fn lzzy_insert_video_info(video_info: VideoInfo) {
         Ok(exists) => {
             if exists {
                 if let Err(e) = db.update_video_lzzy_video_urls(  &video_info.img_url, &video_info.vod_id,  &video_info.lzzy_video_urls).await {
-
                     println!("更新视频信息失败: {}", e);
+                    // 弹窗提示
+                    if let Some(window) = get_app_handle().lock().unwrap().get_webview_window("main") {
+                        let _ = window.emit("show_error_dialog", format!("更新视频信息失败: {}", e));
+                    }
                 } else {
                     println!("更新视频信息成功: {}", video_info.vod_id);
                 }
             } else {
                 if let Err(e) = db.insert_video_info(&video_info).await {
                     println!("插入数据库失败: {}", e);
+                    // 弹窗提示
+                    if let Some(window) = get_app_handle().lock().unwrap().get_webview_window("main") {
+                        let _ = window.emit("show_error_dialog", format!("插入数据库失败: {}", e));
+                    }
                 } else {
                     println!("插入视频信息成功: {}", video_info.vod_id);
                 }
@@ -47,14 +54,20 @@ async fn lzzy_insert_video_info(video_info: VideoInfo) {
         }
         Err(e) => {
             println!("检查视频是否存在失败: {}", e);
+            if let Some(window) = get_app_handle().lock().unwrap().get_webview_window("main") {
+                let _ = window.emit("show_error_dialog", format!("检查视频是否存在失败: {}", e));
+            }
             if let Err(e) = db.insert_video_info(&video_info).await {
                 println!("插入数据库失败: {}", e);
+                if let Some(window) = get_app_handle().lock().unwrap().get_webview_window("main") {
+                    let _ = window.emit("show_error_dialog", format!("插入数据库失败: {}", e));
+                }
             }
         }
     }
 }
 
-// 量子资源 一周采集
+// 量子资源  
 pub async fn get_lzzy_vod_detail(collect_type: CollectType) {
     // 获取AppHandle以便发送进度信息
     let app_handle = crate::app_handle::get_app_handle().lock().unwrap().clone();
