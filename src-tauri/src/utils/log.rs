@@ -106,7 +106,7 @@ fn get_log_path() -> Result<String, rusqlite::Error> {
     let app_handle = get_app_handle().lock().map_err(|_| rusqlite::Error::InvalidPath("AppHandle lock failed".to_string().into()))?;
     let log_dir = app_handle.path().resource_dir().map_err(|_| rusqlite::Error::InvalidPath("Resource dir not found".to_string().into()))?;
     // path.push("video.db");
-    let log_file = log_dir.join(format!("{}.log", Local::now().format("%Y-%m-%d")));
+    let log_file = log_dir.join(format!("logs/{}.log", Local::now().format("%Y-%m-%d")));
     Ok(log_file.to_str().unwrap().to_string())
 }
 

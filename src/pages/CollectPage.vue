@@ -45,7 +45,7 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 import { invoke } from '@tauri-apps/api/core';
 import { listen, UnlistenFn } from '@tauri-apps/api/event';
-import { ElProgress } from 'element-plus';
+import { ElProgress,ElNotification } from 'element-plus';
 import 'element-plus/es/components/progress/style/css';
 // @ts-ignore
 import { Setting } from '@element-plus/icons-vue';    
@@ -124,8 +124,13 @@ onMounted(async () => {
      })
 
      // 采集完成
-     if(current == total){
-        clear()
+     if(current >= total){
+      ElNotification({ title: 'Success', message: '采集完成',  type: 'success' })
+
+       // 5秒后清除
+       setTimeout(()=>{ 
+         clear()
+       },5000)
      }
 
 

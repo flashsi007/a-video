@@ -20,6 +20,20 @@ pub struct VideoInfo {
     pub created_at: String,
     pub updated_at: String
 }
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct CollectRecord {
+    pub id: Option<i32>,
+    pub collect_type: i32,       // 0: 当天采集, 1: 一周采集, 2: 所有采集
+    pub current_page: i32,       // 当前采集页码
+    pub total_pages: i32,        // 总页数
+    pub processed_count: i32,    // 已处理数量
+    pub total_count: i32,        // 总数量
+    pub is_completed: bool,      // 是否完成
+    pub created_at: String,      // 创建时间
+    pub updated_at: String       // 更新时间
+}
+
 impl VideoInfo {
     pub fn from_row(row: &rusqlite::Row) -> Result<VideoInfo, rusqlite::Error> {
         Ok(VideoInfo {
