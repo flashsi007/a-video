@@ -206,6 +206,8 @@ pub async fn get_lzzy_vod_detail(collect_type: CollectType) {
             let mut guard = progress.lock().await;
             guard.percent = 100.0;
             guard.message = "采集完成".to_string();
+            let message = format!("采集完成一共: {} 条", total);
+             log::info(&message);
             if let Some(window) = app_handle.get_webview_window("main") {
                 let _ = window.emit("ffzy_progress", guard.clone());
             }
