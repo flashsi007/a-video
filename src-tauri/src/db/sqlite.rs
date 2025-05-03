@@ -2,9 +2,11 @@ use crate::db::modes::VideoInfo;
 use once_cell::sync::Lazy;
 use rusqlite::{Connection, Result, Row}; 
 use std::path::Path;
-use std::sync::{Arc, Mutex}; use crate::app_handle::get_app_handle; 
+use std::sync::{Arc, Mutex}; 
+use crate::app_handle::get_app_handle; 
 use tauri::Manager;
 use crate::utils::utils::get_current_date;
+
 pub struct SqliteDB {
     pub conn: Arc<Mutex<Connection>>,
 }

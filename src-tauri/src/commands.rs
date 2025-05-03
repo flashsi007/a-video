@@ -4,7 +4,7 @@ use crate::db::modes::VideoInfo;
 use crate::db::sqlite::DB_INSTANCE as db;
 use crate::structs::structs::CollectType;
 use crate::structs::structs::{ResponseLzzyVod,Progress};
-use serde::Deserialize;
+use crate::utils::log;
 use serde_json::Value;  
 use std::sync::Arc;
 use tauri::Emitter;
@@ -38,7 +38,9 @@ async fn lzzy_insert_video_info(video_info: VideoInfo) {
                         let _ = window.emit("show_error_dialog", format!("更新视频信息失败: {}", e));
                     }
                 } else {
-                    println!("更新视频信息成功: {}", video_info.vod_id);
+                    println!("更新视频信息成功: {}", video_info.vod_id); 
+                    let message = format!("更新视频信息成功: {}", video_info.vod_id);
+                    log::info(&message);
                 }
             } else {
                 if let Err(e) = db.insert_video_info(&video_info).await {
@@ -46,14 +48,21 @@ async fn lzzy_insert_video_info(video_info: VideoInfo) {
                     // 弹窗提示
                     if let Some(window) = get_app_handle().lock().unwrap().get_webview_window("main") {
                         let _ = window.emit("show_error_dialog", format!("插入数据库失败: {}", e));
+                        let message = format!("插入数据库失败: {}", e);
+                          log::error(&message);
                     }
                 } else {
                     println!("插入视频信息成功: {}", video_info.vod_id);
+                    let message = format!("更新视频信息成功: {}", video_info.vod_id);
+                    log::info(&message);
                 }
             }
         }
         Err(e) => {
             println!("检查视频是否存在失败: {}", e);
+            let message = format!("检查视频是否存在失败: {}", e);
+            log::error(&message);
+
             if let Some(window) = get_app_handle().lock().unwrap().get_webview_window("main") {
                 let _ = window.emit("show_error_dialog", format!("检查视频是否存在失败: {}", e));
             }
@@ -218,3 +227,22 @@ pub fn get_vod_types() -> Result<String, String> {
     let resource_path = get_resource_path(&app_handle, "resources/crawler/vod_type.json").unwrap();
     fs::read_to_string(&resource_path).map_err(|e| format!("读取vod_type.json失败: {}", e))
 }
+
+
+#[tauri::command]
+pub async fn crawl_ffzy(status: i32) -> Result<String, String> {
+    let collect_type = match status {
+        0 => CollectType::当天采集,
+        1 => CollectType::一周采集,
+        2 => CollectType::所有采集,
+        _ => panic!("无效的值"),
+    };
+
+    // 在子线程中执行采集任务，并向前端发送进度信息
+    get_lzzy_vod_detail(collect_type).await;
+
+    Ok("success".to_string())
+}
+
+
+

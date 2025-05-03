@@ -2,17 +2,10 @@ use serde::de::DeserializeOwned;
 use std::fs;
 use std::path::PathBuf;
 use tauri::AppHandle;
-
+use crate::structs::structs::ResourceError;
 // 👇 必须引入 Manager Trait 才能使用 `.path()`
 use tauri::Manager;
 
-#[derive(Debug)]
-pub enum ResourceError {
-    DirNotFound,
-    FileNotFound(String),
-    IoError(String),
-    JsonError(String),
-}
 
 impl From<std::io::Error> for ResourceError {
     fn from(e: std::io::Error) -> Self {

@@ -7,6 +7,29 @@ pub enum CollectType {
     所有采集 = 2, // 所有采集
 }
 
+/// 日志类型枚举
+pub enum LogType {
+    Info,
+    Error,
+    Success,
+    Warning,
+}
+
+
+/// 日志记录器结构体
+pub struct Logger {
+    pub log_file_path: String,
+}
+
+#[derive(Debug)]
+pub enum ResourceError {
+    DirNotFound,
+    FileNotFound(String),
+    IoError(String),
+    JsonError(String),
+}
+
+
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Progress {
