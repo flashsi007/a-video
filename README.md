@@ -6,6 +6,11 @@
 [![Tauri](https://img.shields.io/badge/Tauri-2.5-blue)](https://tauri.app/)
 [![SQLite](https://img.shields.io/badge/SQLite-3-green)](https://sqlite.org)
 
+
+![A-VIDEO-PAGE-01](public/A-VIDEO-PAGE-01.png)
+![A-VIDEO-PAGE-02](public/A-VIDEO-PAGE-02.png)
+![A-VIDEO-PAGE-03](public/A-VIDEO-PAGE-03.png)
+
 ```mermaid
 graph TD
     A[核心功能] --> B[视频播放]
@@ -34,11 +39,13 @@ pie
 ## 快速开始
 
 ### 环境要求
+
 - Node.js 18+
 - Rust 1.70+
 - pnpm 8+
 
 ### 安装步骤
+
 ```bash
 # 前端依赖
 pnpm install
@@ -48,6 +55,7 @@ pnpm tauri init
 ```
 
 ### 开发模式
+
 ```bash
 # 启动开发服务器
 pnpm dev
@@ -57,12 +65,13 @@ pnpm tauri dev
 ```
 
 ## 项目配置
+
 ```mermaid
 flowchart LR
     config[.env] --> vite[Vite配置]
     config --> tauri[Tauri配置]
     config --> db[数据库配置]
-    
+  
     subgraph 环境变量
     VITE_API_ENDPOINT
     VITE_TAURI_DEBUG
@@ -79,6 +88,7 @@ flowchart LR
 5. 创建Pull Request
 
 ## 许可证
+
 MIT License - 详见 [LICENSE](LICENSE)
 
 ---
