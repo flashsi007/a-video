@@ -1,26 +1,15 @@
-mod package;
 mod db; 
-
-
-mod commands;
-use tauri::Manager;
-
-use crate::commands::{set_db_path,get_vod_types,crawl_ffzy};
-
-mod services;
-use crate::services::vod_service;
-
-mod utils; 
-
-
-mod app_handle;
-
-
+mod utils;  
+mod collect;
 mod structs;
+mod package;
+mod commands;  
+mod services;
+mod app_handle; 
 
-
-
-
+use crate::services::vod_service; 
+use crate::commands::{set_db_path,get_vod_types,crawl_ffzy}; 
+ 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -33,16 +22,12 @@ pub fn run() {
             set_db_path,
             get_vod_types
         ])
-        .setup(|app| { 
-              
+        .setup(|app| {  
             // 初始化全局 AppHandle
             let handle = app.handle().clone();
-            app_handle::set_app_handle(handle);
-            
+            app_handle::set_app_handle(handle); 
             Ok(()) 
-        })
-        
-          
+        }) 
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
