@@ -13,6 +13,8 @@ use crate::utils::utils::get_current_date;
 use crate::app_handle::get_app_handle; 
 use crate::package::fetch::fetch;
 
+const   CHUNK: usize = 100; // 分成 100 个 chunk
+
 fn calculate_total_pages(total: i32, limit: i32) -> i32 {
     if limit == 0 {
         panic!("Limit cannot be zero");
@@ -72,6 +74,8 @@ async fn lzzy_insert_video_info(video_info: VideoInfo) {
 }
 
 pub async fn get_lzzy_vod_detail(collect_type: CollectType) {
+  
+
     let collect_type_num = match collect_type {
         CollectType::当天采集 => 0,
         CollectType::一周采集 => 1,
@@ -150,7 +154,8 @@ pub async fn get_lzzy_vod_detail(collect_type: CollectType) {
     }
 
     let emit_interval = 50i32;
-    let chunk_size = (urls.len() + 4) / 5; // 分成5个chunk
+    let urls_len =  urls.len();
+    let chunk_size = (urls_len+ 4) / CHUNK; 
     let mut handles = vec![];
     let processed_count = Arc::new(AtomicI32::new(0));
 
